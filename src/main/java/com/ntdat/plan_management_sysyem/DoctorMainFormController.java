@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import com.ntdat.plan_management_sysyem.utils.AppConfig;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -953,7 +955,7 @@ public class DoctorMainFormController implements Initializable {
                Path transfer = Paths.get(path);
 
                // LINK YOUR DIRECTORY FOLDER
-               Path copy = Paths.get("D:\\Project\\Java\\plan_management_sysyem\\src\\main\\resources\\com\\ntdat\\plan_management_sysyem\\images\\"
+               Path copy = Paths.get(AppConfig.root_dir + "\\src\\main\\resources\\com\\ntdat\\plan_management_sysyem\\images\\"
                        + Data.admin_id + ".png");
 
                try {

@@ -27,6 +27,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import com.ntdat.plan_management_sysyem.utils.AppConfig;
+import com.ntdat.plan_management_sysyem.utils.ImageConfig;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -1125,11 +1128,11 @@ public class AdminMainFormController implements Initializable {
                String path = Data.path;
                path = path.replace("\\", "\\\\");
                Path transfer = Paths.get(path);
-
-               Path copy = Paths.get("D:\\Project\\Java\\plan_management_sysyem\\src\\main\\resources\\com\\ntdat\\plan_management_sysyem\\images\\"
-                       + Data.admin_id + ".png");
+               var copyPath = ImageConfig.formatCopy(path);
+               Path copy = Paths.get(copyPath);
                Files.copy(transfer, copy, StandardCopyOption.REPLACE_EXISTING);
-               prepare.setString(3, copy.toAbsolutePath().toString());
+               var newPath = ImageConfig.formatPathWrite(copy.toAbsolutePath().toString());
+               prepare.setString(3, newPath);
                prepare.setString(4, profile_gender.getSelectionModel().getSelectedItem());
 
                prepare.executeUpdate();
@@ -1155,8 +1158,8 @@ public class AdminMainFormController implements Initializable {
          result = prepare.executeQuery();
 
          if (result.next()) {
-            tempPath1 = "File:" + result.getString("image");
-            tempPath2 = "File:" + result.getString("image");
+            tempPath1 = "File:" + ImageConfig.formatPathRead(result.getString("image"));
+            tempPath2 = "File:" + ImageConfig.formatPathRead(result.getString("image"));
 
             if (result.getString("image") != null) {
                image = new Image(tempPath1, 1012, 22, false, true);
@@ -1174,7 +1177,7 @@ public class AdminMainFormController implements Initializable {
    public void profileInsertImage() {
 
       FileChooser open = new FileChooser();
-      open.getExtensionFilters().add(new ExtensionFilter("Open Image", "*jpg", "*jpeg", "*png"));
+      open.getExtensionFilters().add(new ExtensionFilter("Open Image", "*.jpg", "*.jpeg", "*.png"));
 
       File file = open.showOpenDialog(profile_importBtn.getScene().getWindow());
 

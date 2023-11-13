@@ -19,7 +19,7 @@ public class database {
 
          Class.forName("com.mysql.cj.jdbc.Driver");
 
-         Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/hospital_system", "root", "");
+         Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/hospital_system", "root", "my-secret-pw");
          // root is the default username while "" or empty or null is the default password
          return connect;
       } catch (Exception e) {

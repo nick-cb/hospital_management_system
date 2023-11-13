@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import com.ntdat.plan_management_sysyem.utils.AppConfig;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -206,7 +208,7 @@ public class EditAppointmentFormController implements Initializable {
                   path = path.replace("\\", "\\\\");
                   Path transfer = Paths.get(path);
 
-                  Path copy = Paths.get("D:\\Project\\Java\\plan_management_sysyem\\src\\main\\resources\\com\\ntdat\\plan_management_sysyem\\images\\"
+                  Path copy = Paths.get(AppConfig.root_dir + "\\src\\main\\resources\\com\\ntdat\\plan_management_sysyem\\images\\"
                        + editApp_appointmentID.getText() + ".png");
                   
                   Files.copy(transfer, copy, StandardCopyOption.REPLACE_EXISTING);
