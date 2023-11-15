@@ -413,7 +413,7 @@ public class DoctorMainFormController implements Initializable {
       dashboad_chart_PD.getData().clear();
 
       String sql = "SELECT date, COUNT(id) FROM patient WHERE doctor = '"
-              + Data.doctor_id + "' GROUP BY TIMESTAMP(date) ASC LIMIT 8";
+              + Data.doctor_id + "' GROUP BY date ORDER BY date LIMIT 8";
       connect = database.connectDB();
 
       try {
@@ -437,7 +437,7 @@ public class DoctorMainFormController implements Initializable {
       dashboad_chart_DD.getData().clear();
 
       String sql = "SELECT date, COUNT(id) FROM appointment WHERE doctor = '"
-              + Data.doctor_id + "' GROUP BY TIMESTAMP(date) ASC LIMIT 7";
+              + Data.doctor_id + "' GROUP BY date ORDER BY date LIMIT 7";
       connect = database.connectDB();
 
       try {

@@ -474,7 +474,7 @@ public class AdminMainFormController implements Initializable {
    public void dashboardPatientDataChart() {
       dashboad_chart_PD.getData().clear();
 
-      String selectData = "SELECT date, COUNT(id) FROM patient WHERE date_delete IS NULL GROUP BY TIMESTAMP(datE) ASC LIMIT 8";
+      String selectData = "SELECT date, COUNT(id) FROM patient WHERE date_delete IS NULL GROUP BY date ORDER BY date LIMIT 8";
 
       connect = database.connectDB();
       XYChart.Series chart = new XYChart.Series<>();
@@ -498,7 +498,7 @@ public class AdminMainFormController implements Initializable {
    public void dashboardDoctorDataChart() {
       dashboad_chart_DD.getData().clear();
 
-      String selectData = "SELECT date, COUNT(id) FROM doctor WHERE delete_date IS NULL GROUP BY TIMESTAMP(date) ASC LIMIT 6";
+      String selectData = "SELECT date, COUNT(id) FROM doctor WHERE delete_date IS NULL GROUP BY date ORDER BY date LIMIT 6";
 
       connect = database.connectDB();
       XYChart.Series chart = new XYChart.Series<>();
