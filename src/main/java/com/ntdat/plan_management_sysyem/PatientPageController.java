@@ -63,7 +63,7 @@ public class PatientPageController implements Initializable {
          alert.errorMessage("Incorrect Patient ID/Password");
       } else {
 
-         String sql = "SELECT * FROM patient WHERE patient_id = ? AND password = ? AND date_delete IS NULL";
+         String sql = "SELECT * FROM patient WHERE patient_id = ? AND password = ? AND deleted_at IS NULL";
          connect = database.connectDB();
 
          try {

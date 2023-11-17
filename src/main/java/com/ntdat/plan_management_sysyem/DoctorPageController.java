@@ -106,7 +106,7 @@ public class DoctorPageController implements Initializable {
          alert.errorMessage("Incorrect Doctor ID/Password");
       } else {
 
-         String sql = "SELECT * FROM doctor WHERE doctor_id = ? AND password = ? AND delete_date IS NULL";
+         String sql = "SELECT * FROM doctor WHERE doctor_id = ? AND password = ? AND deleted_at IS NULL";
          connect = database.connectDB();
 
          try {

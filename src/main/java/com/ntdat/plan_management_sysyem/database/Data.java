@@ -4,14 +4,14 @@
  */
 package com.ntdat.plan_management_sysyem.database;
 
-/**
- *
- * @author thanh
- */
+/*
+* Data store
+* TODO: Using a persistent storage instead of this
+* */
 public class Data {
 
-   public static Integer admin_id;
-   public static String admin_username;
+   public static Integer manager_id;
+   public static String manager_username;
    public static String path;
 
    public static String doctor_id;

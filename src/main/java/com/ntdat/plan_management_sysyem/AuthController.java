@@ -92,7 +92,7 @@ public class AuthController implements Initializable {
          alert.errorMessage("Incorrect Username/Password");
       } else {
 
-         String sql = "SELECT * FROM admin WHERE username = ? AND password = ?";
+         String sql = "SELECT * FROM manager WHERE username = ? AND password = ?";
 
          connect = database.connectDB();
 
@@ -115,13 +115,13 @@ public class AuthController implements Initializable {
 
             if (result.next()) {
                // TO GET THE USERNAME
-               Data.admin_username = login_username.getText();
-               Data.admin_id = Integer.parseInt(result.getString("admin_id"));
+               Data.manager_username = login_username.getText();
+               Data.manager_id = Integer.parseInt(result.getString("id"));
 
                // IF CORRECT USERNAME AND PASSWORD
                alert.successMessage("Login Successfully!");
                // LINK MAIN FORM FOR ADMIN
-               switchTo("AdminMainForm", "Admin Portal");
+               switchTo("ManagerMainForm", "Admin Portal");
                login_loginBtn.getScene().getWindow().hide();
             } else {
                // IF WRONG USERNAME OR PASSWORD
@@ -160,7 +160,7 @@ public class AuthController implements Initializable {
       } else {
 
          // WE WILL CHECK IF THE USERNAME THAT USER ENTERED IS ALREADY EXIST TO OUR DATABASE 
-         String checkUsername = "SELECT * FROM admin WHERE username = '"
+         String checkUsername = "SELECT * FROM manager WHERE username = '"
                  + register_username.getText() + "'";
 
          connect = database.connectDB();
@@ -186,7 +186,7 @@ public class AuthController implements Initializable {
                alert.errorMessage("Invalid Password, at least 8 characters needed");
             } else {
                // TO INSERT THE DATA TO OUR DATABASE
-               String insertData = "INSERT INTO admin (email, username, password, date) VALUES(?,?,?,?)";
+               String insertData = "INSERT INTO manager (email, username, password, birthday) VALUES(?,?,?,?)";
 
                Date date = new Date();
                java.sql.Date sqlDate = new java.sql.Date(date.getTime());

@@ -87,7 +87,7 @@ public class RecordPageFormController implements Initializable {
 
       ObservableList<PatientsData> listData = FXCollections.observableArrayList();
 // RESTART RECORD PAGEFORM FXML IF YOU DIDNT SEE THE RECORDPAGEFORMCONTROLLER CLASS
-      String selectData = "SELECT * FROM patient WHERE date_delete IS NULL AND doctor = '"
+      String selectData = "SELECT * FROM patient WHERE deleted_at IS NULL AND doctor = '"
               + Data.doctor_id + "'";
       connect = database.connectDB();
 
@@ -102,7 +102,7 @@ public class RecordPageFormController implements Initializable {
          while (result.next()) {
             pData = new PatientsData(result.getInt("id"), result.getInt("patient_id"),
                     result.getString("full_name"), result.getString("gender"), result.getLong("moblie_number"),
-                    result.getString("address"), result.getString("status"), result.getDate("date"),
+                    result.getString("address"), result.getString("status"), result.getDate("created_at"),
                     result.getDate("date_modify"), result.getDate("date_delete"));
             listData.add(pData);
          }
@@ -191,7 +191,7 @@ public class RecordPageFormController implements Initializable {
                         return;
                      }
 
-                     String deleteData = "UPDATE patient SET date_delete = ? WHERE patient_id = "
+                     String deleteData = "UPDATE patient SET deleted_at = ? WHERE patient_id = "
                              + pData.getPatientID();
 
                      try {

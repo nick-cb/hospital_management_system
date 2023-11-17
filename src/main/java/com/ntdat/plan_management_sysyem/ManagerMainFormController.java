@@ -28,7 +28,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import com.ntdat.plan_management_sysyem.utils.AppConfig;
 import com.ntdat.plan_management_sysyem.utils.ImageConfig;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -66,7 +65,7 @@ import javafx.util.Callback;
  *
  * @author thanh
  */
-public class AdminMainFormController implements Initializable {
+public class ManagerMainFormController implements Initializable {
 
    @FXML
    private Circle top_profile;
@@ -337,7 +336,7 @@ public class AdminMainFormController implements Initializable {
 
    public void dashboardAD() {
 
-      String sql = "SELECT COUNT(id) FROM doctor WHERE status = 'Active' AND delete_date IS NULL";
+      String sql = "SELECT COUNT(id) FROM doctor WHERE status = 'Active' AND deleted_at IS NULL";
 
       connect = database.connectDB();
 
@@ -360,7 +359,7 @@ public class AdminMainFormController implements Initializable {
 
    public void dashboardTP() {
 
-      String sql = "SELECT COUNT(id) FROM patient WHERE date_delete IS NULL";
+      String sql = "SELECT COUNT(id) FROM patient WHERE deleted_at IS NULL";
 
       connect = database.connectDB();
 
@@ -383,7 +382,7 @@ public class AdminMainFormController implements Initializable {
 
    public void dashboardAP() {
 
-      String sql = "SELECT COUNT(id) FROM patient WHERE date_delete IS NULL AND status = 'Active'";
+      String sql = "SELECT COUNT(id) FROM patient WHERE deleted_at IS NULL AND status = 'Active'";
 
       connect = database.connectDB();
 
@@ -406,7 +405,7 @@ public class AdminMainFormController implements Initializable {
 
    public void dashboardTA() {
 
-      String sql = "SELECT COUNT(id) FROM appointment WHERE date_delete IS NULL";
+      String sql = "SELECT COUNT(id) FROM appointment WHERE deleted_at IS NULL";
 
       connect = database.connectDB();
 
@@ -430,7 +429,7 @@ public class AdminMainFormController implements Initializable {
    public ObservableList<DoctorData> dashboardGetDoctorData() {
 
       ObservableList<DoctorData> listData = FXCollections.observableArrayList();
-      String sql = "SELECT * FROM doctor WHERE delete_date IS NULL";
+      String sql = "SELECT * FROM doctor WHERE deleted_at IS NULL";
 
       connect = database.connectDB();
 
@@ -474,7 +473,7 @@ public class AdminMainFormController implements Initializable {
    public void dashboardPatientDataChart() {
       dashboad_chart_PD.getData().clear();
 
-      String selectData = "SELECT date, COUNT(id) FROM patient WHERE date_delete IS NULL GROUP BY date ORDER BY date LIMIT 8";
+      String selectData = "SELECT created_at, COUNT(id) FROM patient WHERE deleted_at IS NULL GROUP BY created_at ORDER BY created_at LIMIT 8";
 
       connect = database.connectDB();
       XYChart.Series chart = new XYChart.Series<>();
@@ -498,7 +497,7 @@ public class AdminMainFormController implements Initializable {
    public void dashboardDoctorDataChart() {
       dashboad_chart_DD.getData().clear();
 
-      String selectData = "SELECT date, COUNT(id) FROM doctor WHERE delete_date IS NULL GROUP BY date ORDER BY date LIMIT 6";
+      String selectData = "SELECT created_at, COUNT(id) FROM doctor WHERE deleted_at IS NULL GROUP BY created_at ORDER BY created_at LIMIT 6";
 
       connect = database.connectDB();
       XYChart.Series chart = new XYChart.Series<>();
@@ -539,7 +538,7 @@ public class AdminMainFormController implements Initializable {
                     result.getString("email"), result.getString("gender"),
                     result.getLong("moblie_number"), result.getString("specialized"),
                     result.getString("address"), result.getString("image"),
-                    result.getDate("date"), result.getDate("modify_date"),
+                    result.getDate("created_at"), result.getDate("modify_date"),
                     result.getDate("delete_date"), result.getString("status"));
 
             listData.add(dData);
@@ -640,7 +639,7 @@ public class AdminMainFormController implements Initializable {
                         return;
                      }
 
-                     String deleteData = "UPDATE doctor SET delete_date = ? WHERE doctor_id = '"
+                     String deleteData = "UPDATE doctor SET deleted_at = ? WHERE id = '"
                              + pData.getDoctorID() + "'";
 
                      try {
@@ -704,7 +703,7 @@ public class AdminMainFormController implements Initializable {
                     result.getString("image"), result.getString("description"),
                     result.getString("diagnosis"),
                     result.getString("treatment"), result.getString("doctor"),
-                    result.getString("specialized"), result.getDate("date"),
+                    result.getString("specialized"), result.getDate("created_at"),
                     result.getDate("date_modify"), result.getDate("date_delete"),
                     result.getString("status"));
 
@@ -804,7 +803,7 @@ public class AdminMainFormController implements Initializable {
                         return;
                      }
 
-                     String deleteData = "UPDATE patient SET date_delete = ? WHERE patient_id = '"
+                     String deleteData = "UPDATE patient SET deleted_at = ? WHERE id = '"
                              + pData.getPatientID() + "'";
 
                      try {
@@ -864,7 +863,7 @@ public class AdminMainFormController implements Initializable {
                     result.getString("description"), result.getString("diagnosis"),
                     result.getString("treatment"), result.getString("address"),
                     result.getString("doctor"), result.getString("specialized"),
-                    result.getDate("date"), result.getDate("date_modify"),
+                    result.getDate("created_at"), result.getDate("date_modify"),
                     result.getDate("date_delete"), result.getString("status"),
                     result.getDate("schedule"));
             listData.add(aData);
@@ -967,7 +966,7 @@ public class AdminMainFormController implements Initializable {
                         return;
                      }
 
-                     String deleteData = "UPDATE appointment SET date_delete = ? WHERE appointment_id = '"
+                     String deleteData = "UPDATE appointment SET deleted_at = ? WHERE id = '"
                              + aData.getAppointmentID() + "'";
 
                      try {
@@ -1008,7 +1007,7 @@ public class AdminMainFormController implements Initializable {
 
       ObservableList<PatientsData> listData = FXCollections.observableArrayList();
 
-      String sql = "SELECT * FROM patient WHERE date_delete IS NULL AND status_pay IS NULL";
+      String sql = "SELECT * FROM patient WHERE deleted_at IS NULL";
       connect = database.connectDB();
 
       try {
@@ -1024,7 +1023,7 @@ public class AdminMainFormController implements Initializable {
                     result.getInt("patient_id"), result.getString("full_name"),
                     result.getString("gender"), result.getString("description"),
                     result.getString("diagnosis"), result.getString("treatment"),
-                    result.getString("doctor"), result.getString("image"), result.getDate("date"));
+                    result.getString("doctor"), result.getString("image"), result.getDate("created_at"));
 
             listData.add(pData);
          }
@@ -1037,7 +1036,7 @@ public class AdminMainFormController implements Initializable {
    public ObservableList<PatientsData> paymentListData;
 
    public void paymentDisplayData() {
-      paymentListData = paymentGetData();
+/*      paymentListData = paymentGetData();
 
       payment_col_patientID.setCellValueFactory(new PropertyValueFactory<>("patientID"));
       payment_col_name.setCellValueFactory(new PropertyValueFactory<>("fullName"));
@@ -1047,7 +1046,7 @@ public class AdminMainFormController implements Initializable {
       payment_col_date.setCellValueFactory(new PropertyValueFactory<>("date"));
 
       payment_tableView.setItems(paymentListData);
-      payment_tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+      payment_tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);*/
    }
 
    public void paymentSelectItems() {
@@ -1099,8 +1098,8 @@ public class AdminMainFormController implements Initializable {
          alert.errorMessage("Please fill all blank fields");
       } else {
          if (Data.path == null || "".equals(Data.path)) {
-            String updateData = "UPDATE admin SET username = ?, email = ?, gender = ? "
-                    + "WHERE admin_id = " + Data.admin_id;
+            String updateData = "UPDATE manager SET username = ?, email = ?, gender = ? "
+                    + "WHERE id = " + Data.manager_id;
 
             try {
                prepare = connect.prepareStatement(updateData);
@@ -1118,8 +1117,8 @@ public class AdminMainFormController implements Initializable {
             }
 
          } else {
-            String updateData = "UPDATE admin SET username = ?, email = ?, image = ?, gender = ? "
-                    + "WHERE admin_id = " + Data.admin_id;
+            String updateData = "UPDATE manager SET username = ?, email = ?, image = ?, gender = ? "
+                    + "WHERE id = " + Data.manager_id;
             try {
                prepare = connect.prepareStatement(updateData);
                prepare.setString(1, profile_username.getText());
@@ -1148,7 +1147,7 @@ public class AdminMainFormController implements Initializable {
 
    public void profileDisplayImages() {
 
-      String selectData = "SELECT * FROM admin WHERE admin_id = " + Data.admin_id;
+      String selectData = "SELECT * FROM manager WHERE id = " + Data.manager_id;
       connect = database.connectDB();
 
       String tempPath1 = "";
@@ -1191,8 +1190,8 @@ public class AdminMainFormController implements Initializable {
 
    public void profileDisplayInfo() {
 
-      String sql = "SELECT * FROM admin WHERE admin_id = " + Data.admin_id;
-      System.out.println(Data.admin_id);
+      String sql = "SELECT * FROM manager WHERE id = " + Data.manager_id;
+      System.out.println(Data.manager_id);
       connect = database.connectDB();
 
       try {
@@ -1200,15 +1199,15 @@ public class AdminMainFormController implements Initializable {
          result = prepare.executeQuery();
 
          if (result.next()) {
-            profile_adminID.setText(result.getString("admin_id"));
+            profile_adminID.setText(result.getString("id"));
             profile_username.setText(result.getString("username"));
             profile_email.setText(result.getString("email"));
             profile_gender.getSelectionModel().select(result.getString("gender"));
 
-            profile_label_adminIO.setText(result.getString("admin_id"));
+            profile_label_adminIO.setText(result.getString("id"));
             profile_label_name.setText(result.getString("username"));
             profile_label_email.setText(result.getString("email"));
-            profile_label_dateCreated.setText(result.getString("date"));
+            profile_label_dateCreated.setText(result.getString("birthday"));
          }
       } catch (Exception e) {
          e.printStackTrace();
@@ -1308,8 +1307,8 @@ public class AdminMainFormController implements Initializable {
 
    public void displayAdminIDUsername() {
 
-      String sql = "SELECT * FROM admin WHERE username = '"
-              + Data.admin_username + "'";
+      String sql = "SELECT * FROM manager WHERE username = '"
+              + Data.manager_username + "'";
 
       connect = database.connectDB();
 
@@ -1319,7 +1318,7 @@ public class AdminMainFormController implements Initializable {
          result = prepare.executeQuery();
 
          if (result.next()) {
-            nav_adminID.setText(result.getString("admin_id"));
+            nav_adminID.setText(result.getString("id"));
             String tempUsername = result.getString("username");
             tempUsername = tempUsername.substring(0, 1).toUpperCase() + tempUsername.substring(1); // TO SET THE FIRST LETTER TO UPPER CASE
             nav_username.setText(tempUsername);
@@ -1335,8 +1334,8 @@ public class AdminMainFormController implements Initializable {
 
       try {
          if (alert.confirmationMessage("Are you sure you want to logout?")) {
-            Data.admin_id = Integer.parseInt("0");
-            Data.admin_username = "";
+            Data.manager_id = Integer.parseInt("0");
+            Data.manager_username = "";
             
             switchTo("Authentication", "");
             // TO HIDE YOUR MAIN FORM

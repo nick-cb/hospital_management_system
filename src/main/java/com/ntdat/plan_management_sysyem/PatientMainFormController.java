@@ -239,7 +239,7 @@ public class PatientMainFormController implements Initializable {
 
       ObservableList<PatientsData> listData = FXCollections.observableArrayList();
 
-      String sql = "SELECT * FROM patient WHERE date_delete IS NULL AND patient_id = " + Data.patient_id;
+      String sql = "SELECT * FROM patient WHERE deleted_at IS NULL AND patient_id = " + Data.patient_id;
       connect = database.connectDB();
 
       try {
@@ -254,7 +254,7 @@ public class PatientMainFormController implements Initializable {
                     result.getInt("patient_id"),
                     result.getString("description"),
                     result.getString("diagnosis"),
-                    result.getString("treatment"), result.getDate("date"));
+                    result.getString("treatment"), result.getDate("created_at"));
 
             listData.add(pData);
          }
@@ -282,7 +282,7 @@ public class PatientMainFormController implements Initializable {
 
       ObservableList<AppointmentData> listData = FXCollections.observableArrayList();
 
-      String sql = "SELECT * FROM appointment WHERE date_delete IS NULL AND patient_id = "
+      String sql = "SELECT * FROM appointment WHERE deleted_at IS NULL AND patient_id = "
               + Data.patient_id;
 
       connect = database.connectDB();
@@ -494,7 +494,7 @@ public class PatientMainFormController implements Initializable {
    }
 
    public void appointmentDoctor() {
-      String sql = "SELECT * FROM doctor WHERE delete_date IS NULL";
+      String sql = "SELECT * FROM doctor WHERE deleted_at IS NULL";
       connect = database.connectDB();
 
       try {
@@ -625,7 +625,7 @@ public class PatientMainFormController implements Initializable {
             profile_label_patientID.setText(result.getString("patient_id"));
             profile_label_name.setText(result.getString("full_name"));
             profile_label_mobileNumber.setText(result.getString("moblie_number"));
-            profile_label_dateCreated.setText(result.getString("date"));
+            profile_label_dateCreated.setText(result.getString("created_at"));
          }
       } catch (Exception e) {
          e.printStackTrace();

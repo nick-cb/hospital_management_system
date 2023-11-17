@@ -21,9 +21,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,10 +32,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
@@ -413,7 +407,7 @@ public class DoctorMainFormController implements Initializable {
       dashboad_chart_PD.getData().clear();
 
       String sql = "SELECT date, COUNT(id) FROM patient WHERE doctor = '"
-              + Data.doctor_id + "' GROUP BY date ORDER BY date LIMIT 8";
+              + Data.doctor_id + "' GROUP BY created_atORDER BY created_atLIMIT 8";
       connect = database.connectDB();
 
       try {
@@ -437,7 +431,8 @@ public class DoctorMainFormController implements Initializable {
       dashboad_chart_DD.getData().clear();
 
       String sql = "SELECT date, COUNT(id) FROM appointment WHERE doctor = '"
-              + Data.doctor_id + "' GROUP BY date ORDER BY date LIMIT 7";
+              + Data.doctor_id + "' GROUP BY created_at ORDER BY created_at LIMIT 7";
+
       connect = database.connectDB();
 
       try {
@@ -717,7 +712,7 @@ public class DoctorMainFormController implements Initializable {
          alert.errorMessage("Please select the item first");
       } else {
 
-         String updateData = "UPDATE appointment SET date_delete = ? WHERE appointment_id = '"
+         String updateData = "UPDATE appointment SET deleted_at = ? WHERE appointment_id = '"
                  + appointment_appointmentID.getText() + "'";
 
          connect = database.connectDB();
@@ -821,7 +816,7 @@ public class DoctorMainFormController implements Initializable {
 
       ObservableList<AppointmentData> listData = FXCollections.observableArrayList();
 
-      String sql = "SELECT * FROM appointment WHERE date_delete IS NULL and doctor = '"
+      String sql = "SELECT * FROM appointment WHERE deleted_at IS NULL and doctor = '"
               + Data.doctor_id + "'";
 
       connect = database.connectDB();
@@ -842,7 +837,7 @@ public class DoctorMainFormController implements Initializable {
                     result.getString("name"), result.getString("gender"),
                     result.getLong("moblie_number"), result.getString("description"),
                     result.getString("diagnosis"), result.getString("treatment"),
-                    result.getString("address"), result.getDate("date"),
+                    result.getString("address"), result.getDate("created_at"),
                     result.getDate("date_modify"), result.getDate("date_delete"),
                     result.getString("status"), result.getDate("schedule"));
             // STORE ALL DATA
@@ -956,7 +951,7 @@ public class DoctorMainFormController implements Initializable {
 
                // LINK YOUR DIRECTORY FOLDER
                Path copy = Paths.get(AppConfig.root_dir + "\\src\\main\\resources\\com\\ntdat\\plan_management_sysyem\\images\\"
-                       + Data.admin_id + ".png");
+                       + Data.manager_id + ".png");
 
                try {
                   // TO PUT THE IMAGE FILE TO YOUR DIRECTORY FOLDER
@@ -1006,7 +1001,7 @@ public class DoctorMainFormController implements Initializable {
             profile_label_doctorID.setText(result.getString("doctor_id"));
             profile_label_name.setText(result.getString("full_name"));
             profile_label_email.setText(result.getString("email"));
-            profile_label_dateCreated.setText(result.getString("date"));
+            profile_label_dateCreated.setText(result.getString("created_at"));
          }
 
       } catch (SQLException e) {

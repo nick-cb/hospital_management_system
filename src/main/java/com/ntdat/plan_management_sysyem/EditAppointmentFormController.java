@@ -96,7 +96,7 @@ public class EditAppointmentFormController implements Initializable {
    }
 
    public void doctorList() {
-      String sql = "SELECT * FROM doctor WHERE delete_date IS NULL";
+      String sql = "SELECT * FROM doctor WHERE deleted_at IS NULL";
 
       connect = database.connectDB();
 
@@ -116,7 +116,7 @@ public class EditAppointmentFormController implements Initializable {
    }
 
    public void specializedList() {
-      String sql = "SELECT * FROM doctor WHERE delete_date IS NULL AND doctor_id = '"
+      String sql = "SELECT * FROM doctor WHERE deleted_at IS NULL AND doctor_id = '"
               + editApp_doctor.getSelectionModel().getSelectedItem() + "'";
 
       connect = database.connectDB();
