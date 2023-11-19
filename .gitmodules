@@ -1,0 +1,3 @@
+[submodule "hms-db-migration"]
+	path = hms-db-migration
+	url = git@github.com:nick-cb/hms-db-migration.git
