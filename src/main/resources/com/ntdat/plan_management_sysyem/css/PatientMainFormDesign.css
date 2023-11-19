@@ -8,6 +8,16 @@
    -fx-border-width: .5px 0 .4px 0;
 }
 
+.border-bottom {
+   -fx-border-color: #000;
+   -fx-border-width: 0 0 0.5px 0;
+}
+
+.border-left {
+  -fx-border-color: #000;
+  -fx-border-width: 0 0 0 0.5px;
+}
+
 .radius{
    -fx-background-radius: 5px;
 }

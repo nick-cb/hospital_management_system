@@ -42,7 +42,7 @@ public class DoctorPageController implements Initializable {
    private AnchorPane login_form;
 
    @FXML
-   private TextField login_doctorID;
+   private TextField login_doctorEmail;
 
    @FXML
    private PasswordField login_password;
@@ -101,12 +101,12 @@ public class DoctorPageController implements Initializable {
    @FXML
    void loginAccount() {
 
-      if (login_doctorID.getText().isEmpty()
+      if (login_doctorEmail.getText().isEmpty()
               || login_password.getText().isEmpty()) {
          alert.errorMessage("Incorrect Doctor ID/Password");
       } else {
 
-         String sql = "SELECT * FROM doctor WHERE doctor_id = ? AND password = ? AND deleted_at IS NULL";
+         String sql = "SELECT * FROM doctor WHERE email = ? AND password = ? AND deleted_at IS NULL";
          connect = database.connectDB();
 
          try {
@@ -122,40 +122,34 @@ public class DoctorPageController implements Initializable {
             }
 
             // CHECK IF THE STATUS OF THE DOCTOR IS CONFIRM 
-            String checkStatus = "SELECT status FROM doctor WHERE doctor_id = '"
+/*            String checkStatus = "SELECT status FROM doctor WHERE id = '"
                     + login_doctorID.getText() + "' AND password = '"
-                    + login_password.getText() + "' AND status = 'Confirm'";
+                    + login_password.getText() + "' AND status = 'Confirm'";*/
 
-            prepare = connect.prepareStatement(checkStatus);
+//            prepare = connect.prepareStatement(checkStatus);
+//            result = prepare.executeQuery();
+
+            prepare = connect.prepareStatement(sql);
+            prepare.setString(1, login_doctorEmail.getText());
+            prepare.setString(2, login_password.getText());
+
             result = prepare.executeQuery();
 
             if (result.next()) {
 
-               alert.errorMessage("Need the confimation of the Admin!");
+               Data.doctor_id = result.getString("code");
+               Data.doctor_name = result.getString("full_name");
+
+               alert.successMessage("Login Successfully!");
+
+               // LINK YOUR DOCTOR MAIN FORM
+               switchTo("DoctorMainForm", "Doctor Main Form");
+               // TO HIDE YOUR DOCTOR PAGE
+               login_loginBtn.getScene().getWindow().hide();
+
             } else {
-               prepare = connect.prepareStatement(sql);
-               prepare.setString(1, login_doctorID.getText());
-               prepare.setString(2, login_password.getText());
-
-               result = prepare.executeQuery();
-
-               if (result.next()) {
-
-                  Data.doctor_id = result.getString("doctor_id");
-                  Data.doctor_name = result.getString("full_name");
-
-                  alert.successMessage("Login Successfully!");
-
-                  // LINK YOUR DOCTOR MAIN FORM
-                  switchTo("DoctorMainForm", "Doctor Main Form");
-                  // TO HIDE YOUR DOCTOR PAGE
-                  login_loginBtn.getScene().getWindow().hide();
-
-               } else {
-                  alert.errorMessage("Incorrect Doctor ID/Password");
-               }
+               alert.errorMessage("Incorrect Doctor ID/Password");
             }
-
          } catch (IOException | SQLException e) {
          }
 
@@ -188,7 +182,7 @@ public class DoctorPageController implements Initializable {
          alert.errorMessage("Please fill all blank fields");
       } else {
 
-         String checkDoctorID = "SELECT * FROM doctor WHERE doctor_id = '"
+         String checkDoctorID = "SELECT * FROM doctor WHERE id = '"
                  + register_doctorID.getText() + "'"; // LETS CREATE OUR TABLE FOR DOCTOR FIRST
 
          connect = database.connectDB();
@@ -214,7 +208,7 @@ public class DoctorPageController implements Initializable {
                alert.errorMessage("Invalid password, at least 8 characters needed");
             } else {
 
-               String insertData = "INSERT INTO doctor (full_name, email, doctor_id, password, date, status) "
+               String insertData = "INSERT INTO doctor (full_name, email, code, password, birthday, status) "
                        + "VALUES(?,?,?,?,?,?)";
 
                prepare = connect.prepareStatement(insertData);

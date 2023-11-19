@@ -22,7 +22,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,32 +37,27 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.chart.AreaChart;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.chart.*;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.util.StringConverter;
 
 /**
  * FXML Controller class
@@ -318,7 +317,15 @@ public class ManagerMainFormController implements Initializable {
 
    @FXML
    private Button logout_btn;
-   
+
+   @FXML
+   private BarChart dashboard_revenue_chart;
+
+   @FXML
+   private HBox dashboard_timepicker_container;
+   private MonthYearPicker fromMonthYearPicker;
+   private MonthYearPicker toMonthYearPicker;
+
    @FXML
    private void switchTo(String fxml, String breadcrumb) throws IOException {
       App.setRoot(fxml, breadcrumb);
@@ -442,7 +449,7 @@ public class ManagerMainFormController implements Initializable {
 
          while (result.next()) {
 //                DoctorData(String doctorID, String fullName, String specialized, String status)
-            dData = new DoctorData(result.getString("doctor_id"),
+            dData = new DoctorData(result.getString("code"),
                     result.getString("full_name"), result.getString("specialized"),
                     result.getString("status"));
 
@@ -518,6 +525,77 @@ public class ManagerMainFormController implements Initializable {
 
    }
 
+   public void dashboardStackBarChart() {
+      var xAxis = new CategoryAxis();
+      var yAxis = new NumberAxis();
+
+      var series1 = new XYChart.Series<String, Number>();
+      var series2 = new XYChart.Series<String, Number>();
+      var series3 = new XYChart.Series<String, Number>();
+
+      xAxis.setLabel("Month");
+      yAxis.setLabel("VNĐ");
+
+      series1.setName("Revenue");
+      series2.setName("Cost");
+      series3.setName("Profit");
+
+      for(int i = 1; i <= 12; i++) {
+         series1.getData().add(new XYChart.Data<>(String.valueOf(i), 1000000 * i));
+         series2.getData().add(new XYChart.Data<>(String.valueOf(i), 500000 * i));
+         series3.getData().add(new XYChart.Data<>(String.valueOf(i), 500000 * i));
+      }
+
+      dashboard_revenue_chart.getData().addAll(series1, series2, series3);
+   }
+
+   public void dashboardRevenueTimePicker() {
+      fromMonthYearPicker = new MonthYearPicker();
+      fromMonthYearPicker.setValue(YearMonth.of(LocalDate.now().getYear(), 1));
+      toMonthYearPicker = new MonthYearPicker();
+      toMonthYearPicker.setValue(LocalDate.now());
+
+      fromMonthYearPicker.setMax(YearMonth.from(LocalDate.now()));
+      System.out.println(toMonthYearPicker.getValue());
+      fromMonthYearPicker.setMax(YearMonth.from(toMonthYearPicker.getValue().atDay(1).minusMonths(1)));
+      fromMonthYearPicker.setOrder(Order.DESC);
+      fromMonthYearPicker.addEventHandler(MonthYearPicker.USER_SELECTED_EVENT, (Event event) -> {
+         var newValue = fromMonthYearPicker.getValue();
+         var nextMonth = YearMonth.from(newValue.atDay(1).plusMonths(1));
+         toMonthYearPicker.setMin(nextMonth);
+         if (toMonthYearPicker.getValue().compareTo(newValue) < 0) {
+            toMonthYearPicker.setValue(nextMonth);
+         }
+      });
+      fromMonthYearPicker.showingProperty().addListener((observable, oldValue, newValue) -> {
+         if (newValue) {
+            fromMonthYearPicker.scrollTo();
+         }
+      });
+      HBox fromHbox = new HBox(new Label("From:"), fromMonthYearPicker);
+      fromHbox.setSpacing(15);
+      fromHbox.setAlignment(Pos.CENTER_LEFT);
+
+      toMonthYearPicker.setMax(YearMonth.from(LocalDate.now()));
+      toMonthYearPicker.setMin(YearMonth.from(fromMonthYearPicker.getValue().atDay(1).plusMonths(1)));
+      toMonthYearPicker.setOrder(Order.DESC);
+      toMonthYearPicker.addEventHandler(MonthYearPicker.USER_SELECTED_EVENT, (Event event) -> {
+         var newValue = toMonthYearPicker.getValue();
+         var previousMonth = YearMonth.from(newValue.atDay(1).minusMonths(1));
+         fromMonthYearPicker.setMax(previousMonth);
+         System.out.println(fromMonthYearPicker.getValue().compareTo(newValue));
+         if (fromMonthYearPicker.getValue().compareTo(newValue) > 0) {
+            fromMonthYearPicker.setValue(previousMonth);
+         }
+      });
+
+      HBox toHbox = new HBox(new Label("To:"), toMonthYearPicker);
+      toHbox.setSpacing(15);
+      toHbox.setAlignment(Pos.CENTER_LEFT);
+
+      dashboard_timepicker_container.getChildren().addAll(fromHbox, toHbox);
+   }
+
    public ObservableList<DoctorData> doctorGetData() {
       ObservableList<DoctorData> listData = FXCollections.observableArrayList();
 
@@ -533,13 +611,13 @@ public class ManagerMainFormController implements Initializable {
 //                DoctorData(Integer id, String doctorID, String password, String fullName,
 //            String email, String gender, Long mobileNumber, String specialized, String address,
 //            String image, Date date, Date dateModify, Date dateDelete, String status)
-            dData = new DoctorData(result.getInt("id"), result.getString("doctor_id"),
+            dData = new DoctorData(result.getInt("id"), result.getString("code"),
                     result.getString("password"), result.getString("full_name"),
                     result.getString("email"), result.getString("gender"),
                     result.getLong("moblie_number"), result.getString("specialized"),
                     result.getString("address"), result.getString("image"),
-                    result.getDate("created_at"), result.getDate("modify_date"),
-                    result.getDate("delete_date"), result.getString("status"));
+                    result.getDate("created_at"), result.getDate("modified_at"),
+                    result.getDate("deleted_at"), result.getString("status"));
 
             listData.add(dData);
          }
@@ -619,6 +697,7 @@ public class ManagerMainFormController implements Initializable {
                         Data.temp_doctorImagePath = pData.getImage();
 
                         // NOW LETS CREATE FXML FOR EDIT PATIENT FORM
+                        Data.edit_doctor_mode = "edit";
                         Parent root = FXMLLoader.load(getClass().getResource("EditDoctorForm.fxml"));
                         Stage stage = new Stage();
 
@@ -841,6 +920,13 @@ public class ManagerMainFormController implements Initializable {
 
    }
 
+   public void openCreateForm() throws IOException {
+      Data.edit_doctor_mode = "add";
+      Parent root = FXMLLoader.load(getClass().getResource("EditDoctorForm.fxml"));
+      Stage stage = new Stage();
+      stage.setScene(new Scene(root));
+      stage.show();
+   }
    public ObservableList<AppointmentData> appointmentGetData() {
 
       ObservableList<AppointmentData> listData = FXCollections.observableArrayList();
@@ -1240,7 +1326,7 @@ public class ManagerMainFormController implements Initializable {
          dashboardTP();
          dashboardAP();
          dashboardTA();
-         dashboardGetDoctorDisplayData();
+//         dashboardGetDoctorDisplayData();
 
          current_form.setText("Dashboard Form");
       } else if (event.getSource() == doctors_btn) {
@@ -1382,9 +1468,11 @@ public class ManagerMainFormController implements Initializable {
       dashboardTP();
       dashboardAP();
       dashboardTA();
-      dashboardGetDoctorDisplayData();
+      dashboardStackBarChart();
+      dashboardRevenueTimePicker();
+   /*      dashboardGetDoctorDisplayData();
       dashboardPatientDataChart();
-      dashboardDoctorDataChart();
+      dashboardDoctorDataChart();*/
 
       // TO DISPLAY IMMEDIATELY THE DATA OF DOCTORS IN TABLEVIEW
       doctorDisplayData();

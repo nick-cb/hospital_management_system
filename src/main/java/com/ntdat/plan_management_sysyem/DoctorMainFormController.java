@@ -496,7 +496,7 @@ public class DoctorMainFormController implements Initializable {
             String doctorName = "";
             String doctorSpecialized = "";
 
-            String getDoctor = "SELECT * FROM doctor WHERE doctor_id = '"
+            String getDoctor = "SELECT * FROM doctor WHERE id = '"
                     + nav_adminID.getText() + "'";
 
             statement = connect.createStatement();
@@ -608,7 +608,7 @@ public class DoctorMainFormController implements Initializable {
                alert.errorMessage(appointment_appointmentID.getText() + " was already taken");
             } else {
                String getSpecialized = "";
-               String getDoctorData = "SELECT * FROM doctor WHERE doctor_id = '"
+               String getDoctorData = "SELECT * FROM doctor WHERE id = '"
                        + Data.doctor_id + "'";
 
                statement = connect.createStatement();
@@ -910,8 +910,8 @@ public class DoctorMainFormController implements Initializable {
          // CHECK IF THE PATH IS NULL 
          if (Data.path == null || "".equals(Data.path)) {
             String updateData = "UPDATE doctor SET full_name = ?, email = ?"
-                    + ", gender = ?, moblie_number = ?, address = ?, specialized = ?, status = ?, modify_date = ?"
-                    + " WHERE doctor_id = '"
+                    + ", gender = ?, moblie_number = ?, address = ?, specialized = ?, status = ?, modified_at = ?"
+                    + " WHERE id = '"
                     + Data.doctor_id + "'";
             try {
                Date date = new Date();
@@ -933,8 +933,8 @@ public class DoctorMainFormController implements Initializable {
             }
          } else {
             String updateData = "UPDATE doctor SET full_name = ?, email = ?"
-                    + ", gender = ?, moblie_number = ?, address = ?, image = ?, specialized = ?, status = ?, modify_date = ?"
-                    + " WHERE doctor_id = '"
+                    + ", gender = ?, moblie_number = ?, address = ?, image = ?, specialized = ?, status = ?, modified_at = ?"
+                    + " WHERE id = '"
                     + Data.doctor_id + "'";
             try {
                Date date = new Date();
@@ -989,7 +989,7 @@ public class DoctorMainFormController implements Initializable {
    }
 
    public void profileLabels() {
-      String selectData = "SELECT * FROM doctor WHERE doctor_id = '"
+      String selectData = "SELECT * FROM doctor WHERE id = '"
               + Data.doctor_id + "'";
       connect = database.connectDB();
 
@@ -998,7 +998,7 @@ public class DoctorMainFormController implements Initializable {
          result = prepare.executeQuery();
 
          if (result.next()) {
-            profile_label_doctorID.setText(result.getString("doctor_id"));
+            profile_label_doctorID.setText(result.getString("code"));
             profile_label_name.setText(result.getString("full_name"));
             profile_label_email.setText(result.getString("email"));
             profile_label_dateCreated.setText(result.getString("created_at"));
@@ -1009,7 +1009,7 @@ public class DoctorMainFormController implements Initializable {
    }
 
    public void profileFields() {
-      String selectData = "SELECT * FROM doctor WHERE doctor_id = '"
+      String selectData = "SELECT * FROM doctor WHERE id = '"
               + Data.doctor_id + "'";
 
       connect = database.connectDB();
@@ -1018,7 +1018,7 @@ public class DoctorMainFormController implements Initializable {
          result = prepare.executeQuery();
 
          if (result.next()) {
-            profile_doctorID.setText(result.getString("doctor_id"));
+            profile_doctorID.setText(result.getString("code"));
             profile_name.setText(result.getString("full_name"));
             profile_email.setText(result.getString("email"));
             profile_gender.getSelectionModel().select(result.getString("gender"));
@@ -1034,7 +1034,7 @@ public class DoctorMainFormController implements Initializable {
 
    public void profileDisplayImages() {
 
-      String selectData = "SELECT * FROM doctor WHERE doctor_id = '"
+      String selectData = "SELECT * FROM doctor WHERE id = '"
               + Data.doctor_id + "'";
       String temp_path1 = "";
       String temp_path2 = "";

@@ -34,6 +34,7 @@ public class Data {
    public static String temp_date;
    public static String temp_path;
 
+   public static String edit_doctor_mode = "add";
    public static String temp_doctorID;
    public static String temp_doctorName;
    public static String temp_doctorEmail;
@@ -56,4 +57,5 @@ public class Data {
    public static String temp_appDoctor;
    public static String temp_appSpecialized;
    public static String temp_appStatus;
+
 }

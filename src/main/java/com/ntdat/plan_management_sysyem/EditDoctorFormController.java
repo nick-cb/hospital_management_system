@@ -16,24 +16,19 @@ import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import com.ntdat.plan_management_sysyem.utils.AppConfig;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Stage;
 
 /**
  * FXML Controller class
@@ -109,7 +104,7 @@ public class EditDoctorFormController implements Initializable {
 
    public void displayDoctorData() {
 
-      String sql = "SELECT * FROM doctor WHERE doctor_id = '"
+      String sql = "SELECT * FROM doctor WHERE id = '"
               + editDoctor_doctorID.getText() + "'";
       connect = database.connectDB();
 
@@ -136,17 +131,20 @@ public class EditDoctorFormController implements Initializable {
       }
    }
 
+   public boolean isTextFieldNullish(TextInputControl textField) {
+      return Optional.ofNullable(textField.getText()).orElse("").isEmpty();
+   }
+
    public void updateBtn() {
       connect = database.connectDB();
 
-      if (editDoctor_doctorID.getText().isEmpty()
-              || editDoctor_fullName.getText().isEmpty()
-              || editDoctor_email.getText().isEmpty()
-              || editDoctor_password.getText().isEmpty()
+      if (isTextFieldNullish(editDoctor_fullName)
+              || isTextFieldNullish(editDoctor_email)
+              || isTextFieldNullish(editDoctor_password)
               || editDoctor_specialized.getSelectionModel().getSelectedItem() == null
               || editDoctor_gender.getSelectionModel().getSelectedItem() == null
-              || editDoctor_mobileNumber.getText().isEmpty()
-              || editDoctor_address.getText().isEmpty()
+              || isTextFieldNullish(editDoctor_mobileNumber)
+              || isTextFieldNullish(editDoctor_address)
               || editDoctor_status.getSelectionModel().getSelectedItem() == null) {
          alert.errorMessage("Please fill all blank fields");
       } else {
@@ -162,9 +160,9 @@ public class EditDoctorFormController implements Initializable {
                     + editDoctor_gender.getSelectionModel().getSelectedItem() + "', moblie_number = '"
                     + editDoctor_mobileNumber.getText() + "', address = '"
                     + editDoctor_address.getText() + "', status = '"
-                    + editDoctor_status.getSelectionModel().getSelectedItem() + "', modify_date = '"
+                    + editDoctor_status.getSelectionModel().getSelectedItem() + "', modified_at = '"
                     + String.valueOf(sqlDate) + "' "
-                    + "WHERE doctor_id = '" + editDoctor_doctorID.getText() + "'";
+                    + "WHERE id = '" + editDoctor_doctorID.getText() + "'";
             try {
                if (alert.confirmationMessage("Are you sure you want to Update Doctor ID: " + editDoctor_doctorID.getText() + "?")) {
                   prepare = connect.prepareStatement(updateData);
@@ -201,7 +199,7 @@ public class EditDoctorFormController implements Initializable {
                           + insertImage + "', address = '"
                           + editDoctor_address.getText() + "', status = '"
                           + editDoctor_status.getSelectionModel().getSelectedItem() + "' "
-                          + "WHERE doctor_id = '" + editDoctor_doctorID.getText() + "'";
+                          + "WHERE id = '" + editDoctor_doctorID.getText() + "'";
 
                   prepare = connect.prepareStatement(updateData);
                   prepare.executeUpdate();
@@ -219,7 +217,8 @@ public class EditDoctorFormController implements Initializable {
    }
 
    public void cancelBtn() {
-      displayDoctorData();
+      Stage stage = (Stage) editDoctor_cancelBtn.getScene().getWindow();
+      stage.close();
    }
 
    public void setField() {
@@ -275,6 +274,7 @@ public class EditDoctorFormController implements Initializable {
     */
    @Override
    public void initialize(URL url, ResourceBundle rb) {
+      this.editDoctor_doctorID.setDisable(true);
       setField();
       specializationList();
       genderList();

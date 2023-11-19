@@ -239,7 +239,7 @@ public class PatientMainFormController implements Initializable {
 
       ObservableList<PatientsData> listData = FXCollections.observableArrayList();
 
-      String sql = "SELECT * FROM patient WHERE deleted_at IS NULL AND patient_id = " + Data.patient_id;
+      String sql = "SELECT * FROM patient WHERE deleted_at IS NULL AND id = " + Data.patient_id;
       connect = database.connectDB();
 
       try {
@@ -282,7 +282,7 @@ public class PatientMainFormController implements Initializable {
 
       ObservableList<AppointmentData> listData = FXCollections.observableArrayList();
 
-      String sql = "SELECT * FROM appointment WHERE deleted_at IS NULL AND patient_id = "
+      String sql = "SELECT * FROM appointment WHERE deleted_at IS NULL AND id = "
               + Data.patient_id;
 
       connect = database.connectDB();
@@ -327,7 +327,7 @@ public class PatientMainFormController implements Initializable {
 
    public void homeDoctorInfoDisplay() {
 
-      String sql = "SELECT * FROM patient WHERE patient_id = " + Data.patient_id;
+      String sql = "SELECT * FROM patient WHERE id = " + Data.patient_id;
 
       connect = database.connectDB();
 
@@ -340,7 +340,7 @@ public class PatientMainFormController implements Initializable {
             tempDoctorID = result.getString("doctor");
          }
 
-         String checkDoctor = "SELECT * FROM doctor WHERE doctor_id = '"
+         String checkDoctor = "SELECT * FROM doctor WHERE id = '"
                  + tempDoctorID + "'";
 
          statement = connect.createStatement();
@@ -388,7 +388,7 @@ public class PatientMainFormController implements Initializable {
          while (result.next()) {
 //                DoctorData(Integer id, String doctorID, String fullName, String specialized, String email)
             dData = new DoctorData(result.getInt("id"),
-                    result.getString("doctor_id"),
+                    result.getString("code"),
                     result.getString("full_name"),
                     result.getString("specialized"),
                     result.getString("email"),
@@ -440,7 +440,7 @@ public class PatientMainFormController implements Initializable {
 
    public void appointmentAppointmentInfoDisplay() {
 
-      String sql = "SELECT * FROM patient WHERE patient_id = " + Data.patient_id;
+      String sql = "SELECT * FROM patient WHERE id = " + Data.patient_id;
 
       connect = database.connectDB();
 
@@ -471,7 +471,7 @@ public class PatientMainFormController implements Initializable {
          appointment_ad_description.setText(appointment_d_description.getText());
          appointment_ad_doctorName.setText(appointment_d_doctor.getSelectionModel().getSelectedItem());
 
-         String sql = "SELECT * FROM doctor WHERE doctor_id = '"
+         String sql = "SELECT * FROM doctor WHERE id = '"
                  + appointment_d_doctor.getSelectionModel().getSelectedItem() + "'";
 
          connect = database.connectDB();
@@ -503,7 +503,7 @@ public class PatientMainFormController implements Initializable {
 
          ObservableList listData = FXCollections.observableArrayList();
          while (result.next()) {
-            listData.add(result.getString("doctor_id"));
+            listData.add(result.getString("code"));
          }
 
          appointment_d_doctor.setItems(listData);
@@ -533,7 +533,7 @@ public class PatientMainFormController implements Initializable {
               || appointment_ad_schedule.getText().isEmpty()) {
          alert.errorMessage("Invalid");
       } else {
-         String selectData = "SELECT MAX(appointment_id) FROM appointment";
+         String selectData = "SELECT MAX(id) FROM appointment";
 
          int tempAppID = 0;
 
@@ -586,7 +586,7 @@ public class PatientMainFormController implements Initializable {
 
    public void profileDisplayFields() {
 
-      String sql = "SELECT * FROM patient WHERE patient_id = " + Data.patient_id;
+      String sql = "SELECT * FROM patient WHERE id = " + Data.patient_id;
       connect = database.connectDB();
 
       try {
@@ -614,7 +614,7 @@ public class PatientMainFormController implements Initializable {
    }
 
    public void profileDisplayLabels() {
-      String sql = "SELECT * FROM patient WHERE patient_id = " + Data.patient_id;
+      String sql = "SELECT * FROM patient WHERE id = " + Data.patient_id;
       connect = database.connectDB();
 
       try {
@@ -634,7 +634,7 @@ public class PatientMainFormController implements Initializable {
 
    public void profileDisplayImages() {
 
-      String sql = "SELECT * FROM patient WHERE patient_id = " + Data.patient_id;
+      String sql = "SELECT * FROM patient WHERE id = " + Data.patient_id;
       connect = database.connectDB();
 
       String tempPath1 = "";
@@ -678,7 +678,7 @@ public class PatientMainFormController implements Initializable {
                        + profile_mobileNumber.getText() + "', gender = '"
                        + profile_status.getSelectionModel().getSelectedItem() + "', password = '"
                        + profile_password.getText() + "', address = '"
-                       + profile_address.getText() + "' WHERE patient_id = " + Data.patient_id;
+                       + profile_address.getText() + "' WHERE id = " + Data.patient_id;
 
                try {
                   prepare = connect.prepareStatement(updateData);
@@ -706,7 +706,7 @@ public class PatientMainFormController implements Initializable {
                        + profile_status.getSelectionModel().getSelectedItem() + "', password = '"
                        + profile_password.getText() + "', address = '"
                        + profile_address.getText() + "', image = '"
-                       + copyPath + "' WHERE patient_id = " + Data.patient_id;
+                       + copyPath + "' WHERE id = " + Data.patient_id;
 
                try {
                   prepare = connect.prepareStatement(updateData);
@@ -810,7 +810,7 @@ public class PatientMainFormController implements Initializable {
    }
 
    public void displayPatient() {
-      String sql = "SELECT * FROM patient WHERE patient_id = " + Data.patient_id;
+      String sql = "SELECT * FROM patient WHERE id = " + Data.patient_id;
       connect = database.connectDB();
 
       try {

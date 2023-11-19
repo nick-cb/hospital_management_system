@@ -105,7 +105,7 @@ public class EditAppointmentFormController implements Initializable {
          result = prepare.executeQuery();
          ObservableList listData = FXCollections.observableArrayList();
          while (result.next()) {
-            listData.add(result.getString("doctor_id"));
+            listData.add(result.getString("code"));
          }
 
          editApp_doctor.setItems(listData);
@@ -116,7 +116,7 @@ public class EditAppointmentFormController implements Initializable {
    }
 
    public void specializedList() {
-      String sql = "SELECT * FROM doctor WHERE deleted_at IS NULL AND doctor_id = '"
+      String sql = "SELECT * FROM doctor WHERE deleted_at IS NULL AND id = '"
               + editApp_doctor.getSelectionModel().getSelectedItem() + "'";
 
       connect = database.connectDB();
