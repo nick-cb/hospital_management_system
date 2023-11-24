@@ -1,6 +1,7 @@
 package com.ntdat.plan_management_sysyem.utils;
 
 public class ImageConfig {
+    public static String defaultImage = AppConfig.root_dir + "/src/main/resources/com/ntdat/plan_management_sysyem/images/default.png";
     public static String formatUnix(String path) {
         return path.replace("\\", "/").replace("//", "/");
     }

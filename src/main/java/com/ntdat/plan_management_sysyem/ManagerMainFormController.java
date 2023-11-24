@@ -38,6 +38,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -56,6 +57,7 @@ import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 
@@ -926,6 +928,13 @@ public class ManagerMainFormController implements Initializable {
       Stage stage = new Stage();
       stage.setScene(new Scene(root));
       stage.show();
+      stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+         @Override
+         public void handle(WindowEvent windowEvent) {
+            System.out.println("Closed");
+            doctorListData = doctorGetData();
+         }
+      });
    }
    public ObservableList<AppointmentData> appointmentGetData() {
 
