@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -34,6 +35,7 @@ import java.util.ResourceBundle;
 
 import com.ntdat.plan_management_sysyem.utils.ImageConfig;
 import javafx.application.Platform;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -169,6 +171,9 @@ public class ManagerMainFormController implements Initializable {
 
    @FXML
    private TableColumn<DoctorData, String> doctors_col_status;
+
+   @FXML
+   private TableColumn<DoctorData, Double> doctors_col_salary;
 
    @FXML
    private TableColumn<DoctorData, String> doctors_col_action;
@@ -558,7 +563,6 @@ public class ManagerMainFormController implements Initializable {
       toMonthYearPicker.setValue(LocalDate.now());
 
       fromMonthYearPicker.setMax(YearMonth.from(LocalDate.now()));
-      System.out.println(toMonthYearPicker.getValue());
       fromMonthYearPicker.setMax(YearMonth.from(toMonthYearPicker.getValue().atDay(1).minusMonths(1)));
       fromMonthYearPicker.setOrder(Order.DESC);
       fromMonthYearPicker.addEventHandler(MonthYearPicker.USER_SELECTED_EVENT, (Event event) -> {
@@ -585,7 +589,6 @@ public class ManagerMainFormController implements Initializable {
          var newValue = toMonthYearPicker.getValue();
          var previousMonth = YearMonth.from(newValue.atDay(1).minusMonths(1));
          fromMonthYearPicker.setMax(previousMonth);
-         System.out.println(fromMonthYearPicker.getValue().compareTo(newValue));
          if (fromMonthYearPicker.getValue().compareTo(newValue) > 0) {
             fromMonthYearPicker.setValue(previousMonth);
          }
@@ -619,8 +622,8 @@ public class ManagerMainFormController implements Initializable {
                     result.getLong("moblie_number"), result.getString("specialized"),
                     result.getString("address"), result.getString("image"),
                     result.getDate("created_at"), result.getDate("modified_at"),
-                    result.getDate("deleted_at"), result.getString("status"));
-
+                    result.getDate("deleted_at"), result.getString("status"),
+                    result.getDouble("salary"));
             listData.add(dData);
          }
       } catch (Exception e) {
@@ -636,12 +639,13 @@ public class ManagerMainFormController implements Initializable {
 
       doctors_col_doctorID.setCellValueFactory(new PropertyValueFactory<>("doctorID"));
       doctors_col_name.setCellValueFactory(new PropertyValueFactory<>("fullName"));
-      doctors_col_gender.setCellValueFactory(new PropertyValueFactory<>("gender"));
+//      doctors_col_gender.setCellValueFactory(new PropertyValueFactory<>("gender"));
       doctors_col_contactNumber.setCellValueFactory(new PropertyValueFactory<>("mobileNumber"));
       doctors_col_email.setCellValueFactory(new PropertyValueFactory<>("email"));
       doctors_col_specialization.setCellValueFactory(new PropertyValueFactory<>("specialized"));
       doctors_col_address.setCellValueFactory(new PropertyValueFactory<>("address"));
       doctors_col_status.setCellValueFactory(new PropertyValueFactory<>("status"));
+      doctors_col_salary.setCellValueFactory(new PropertyValueFactory<>("salary"));
 
       doctors_tableView.setItems(doctorListData);
       doctors_tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
@@ -697,6 +701,7 @@ public class ManagerMainFormController implements Initializable {
                         Data.temp_doctorAddress = pData.getAddress();
                         Data.temp_doctorStatus = pData.getStatus();
                         Data.temp_doctorImagePath = pData.getImage();
+                        Data.temp_doctorSalary = pData.getSalary();
 
                         // NOW LETS CREATE FXML FOR EDIT PATIENT FORM
                         Data.edit_doctor_mode = "edit";
@@ -705,7 +710,14 @@ public class ManagerMainFormController implements Initializable {
 
                         stage.setScene(new Scene(root));
                         stage.show();
-
+                        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                           @Override
+                           public void handle(WindowEvent windowEvent) {
+                              System.out.println("Closed");
+                              doctorListData = doctorGetData();
+                              doctors_tableView.setItems(doctorListData);
+                           }
+                        });
                      } catch (Exception e) {
                         e.printStackTrace();
                      }
@@ -756,6 +768,25 @@ public class ManagerMainFormController implements Initializable {
       doctors_col_action.setCellFactory(cellFactory);
       doctors_tableView.setItems(doctorListData);
 
+   }
+
+   public void doctorSalaryCell() {
+      doctors_col_salary.setCellFactory(new Callback<TableColumn<DoctorData, Double>, TableCell<DoctorData, Double>>() {
+         @Override
+         public TableCell<DoctorData, Double> call(TableColumn<DoctorData, Double> param) {
+            return new TableCell<DoctorData, Double>() {
+               @Override
+               protected void updateItem(Double item, boolean empty) {
+                  super.updateItem(item, empty);
+                  if (item == null || empty) {
+                     setText(null);
+                  } else {
+                     setText(NumberFormat.getNumberInstance().format(item));
+                  }
+               }
+            };
+         }
+      });
    }
 
    public ObservableList<PatientsData> patientGetData() {
@@ -931,8 +962,8 @@ public class ManagerMainFormController implements Initializable {
       stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
          @Override
          public void handle(WindowEvent windowEvent) {
-            System.out.println("Closed");
             doctorListData = doctorGetData();
+            doctors_tableView.setItems(doctorListData);
          }
       });
    }
@@ -1349,6 +1380,7 @@ public class ManagerMainFormController implements Initializable {
          // TO DISPLAY IMMEDIATELY THE DATA OF DOCTORS IN TABLEVIEW
          doctorDisplayData();
          doctorActionButton();
+         doctorSalaryCell();
 
          current_form.setText("Doctor's Form");
       } else if (event.getSource() == patients_btn) {
@@ -1486,6 +1518,7 @@ public class ManagerMainFormController implements Initializable {
       // TO DISPLAY IMMEDIATELY THE DATA OF DOCTORS IN TABLEVIEW
       doctorDisplayData();
       doctorActionButton();
+      doctorSalaryCell();
 
       // TO DISPLAY IMMEDIATELY THE DATA OF PATIENTS IN TABLEVIEW
       patientDisplayData();

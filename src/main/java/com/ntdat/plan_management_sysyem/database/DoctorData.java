@@ -26,10 +26,11 @@ public class DoctorData {
    private Date dateModify;
    private Date dateDelete;
    private String status;
+   private Double salary;
 
    public DoctorData(Integer id, String doctorID, String password, String fullName,
            String email, String gender, Long mobileNumber, String specialized, String address,
-           String image, Date date, Date dateModify, Date dateDelete, String status) {
+           String image, Date date, Date dateModify, Date dateDelete, String status, Double salary) {
       this.id = id;
       this.doctorID = doctorID;
       this.password = password;
@@ -44,6 +45,7 @@ public class DoctorData {
       this.dateModify = dateModify;
       this.dateDelete = dateDelete;
       this.status = status;
+      this.salary = salary;
    }
 
    public DoctorData(String doctorID, String fullName, String specialized, String status) {
@@ -116,5 +118,9 @@ public class DoctorData {
 
    public String getStatus() {
       return status;
+   }
+
+   public Double getSalary() {
+      return salary;
    }
 }

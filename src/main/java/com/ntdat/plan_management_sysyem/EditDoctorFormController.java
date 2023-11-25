@@ -18,6 +18,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.*;
 
 import com.ntdat.plan_management_sysyem.utils.AppConfig;
@@ -81,6 +83,9 @@ public class EditDoctorFormController implements Initializable {
 
     @FXML
     private Button editDoctor_cancelBtn;
+
+    @FXML
+    private TextField editDoctor_salary;
 
     private AlertMessage alert = new AlertMessage();
 
@@ -154,8 +159,9 @@ public class EditDoctorFormController implements Initializable {
                     + editDoctor_mobileNumber.getText() + "', address = '"
                     + editDoctor_address.getText() + "', status = '"
                     + editDoctor_status.getSelectionModel().getSelectedItem() + "', modified_at = '"
-                    + String.valueOf(sqlDate) + "' "
-                    + "WHERE code = '" + editDoctor_doctorID.getText() + "'";
+                    + String.valueOf(sqlDate) + "' " + ", salary = "
+                    + Double.parseDouble(editDoctor_salary.getText())
+                    + " WHERE code = '" + editDoctor_doctorID.getText() + "'";
             try {
                 if (alert.confirmationMessage("Are you sure you want to Update Doctor ID: " + editDoctor_doctorID.getText() + "?")) {
                     prepare = connect.prepareStatement(updateData);
@@ -191,6 +197,8 @@ public class EditDoctorFormController implements Initializable {
                             + insertImage + "', address = '"
                             + editDoctor_address.getText() + "', status = '"
                             + editDoctor_status.getSelectionModel().getSelectedItem() + "' "
+                            + ", salary = "
+                            + Double.parseDouble(editDoctor_salary.getText()) + " "
                             + "WHERE code = '" + editDoctor_doctorID.getText() + "'";
 
                     prepare = connect.prepareStatement(updateData);
@@ -208,9 +216,8 @@ public class EditDoctorFormController implements Initializable {
 
     public void createDoctor() {
         Date date = new Date();
-        java.sql.Date sqlDate = new java.sql.Date(date.getTime());
 
-        String createData = "INSERT INTO doctor (full_name, email, password, specialized, gender, moblie_number, address, status, image) VALUES (?,?,?,?,?,?,?,?,?)";
+        String createData = "INSERT INTO doctor (full_name, email, password, specialized, gender, moblie_number, address, status, image, salary) VALUES (?,?,?,?,?,?,?,?,?,?)";
 
         try {
            prepare = connect.prepareStatement(createData, Statement.RETURN_GENERATED_KEYS);
@@ -231,6 +238,7 @@ public class EditDoctorFormController implements Initializable {
            } else {
                prepare.setString(9, ImageConfig.formatPathWrite(ImageConfig.defaultImage));
            }
+            prepare.setDouble(10, Double.parseDouble(editDoctor_salary.getText()));
            prepare.executeUpdate();
            ResultSet result = prepare.getGeneratedKeys();
            if (result.next()) {
@@ -257,6 +265,7 @@ public class EditDoctorFormController implements Initializable {
                 || editDoctor_gender.getSelectionModel().getSelectedItem() == null
                 || isTextFieldNullish(editDoctor_mobileNumber)
                 || isTextFieldNullish(editDoctor_address)
+                || isTextFieldNullish(editDoctor_salary)
                 || editDoctor_status.getSelectionModel().getSelectedItem() == null) {
             alert.errorMessage("Please fill all blank fields");
             return;
@@ -279,6 +288,7 @@ public class EditDoctorFormController implements Initializable {
     public void setField() {
         editDoctor_doctorID.setText(Data.temp_doctorID);
         editDoctor_fullName.setText(Data.temp_doctorName);
+        editDoctor_salary.setText(new DecimalFormat("#").format(Data.temp_doctorSalary));
         editDoctor_email.setText(Data.temp_doctorEmail);
         editDoctor_password.setText(Data.temp_doctorPassword);
         editDoctor_specialized.getSelectionModel().select(Data.temp_doctorSpecialized);
@@ -287,8 +297,13 @@ public class EditDoctorFormController implements Initializable {
         editDoctor_address.setText(Data.temp_doctorName);
         editDoctor_status.getSelectionModel().select(Data.temp_doctorStatus);
 
-        image = new Image("File:" + ImageConfig.formatPathRead(Data.temp_doctorImagePath), 112, 121, false, true);
-        editDoctor_imageView.setImage(image);
+        if (Data.temp_doctorImagePath != null) {
+            image = new Image("File:" + ImageConfig.formatPathRead(Data.temp_doctorImagePath), 112, 121, false, true);
+            editDoctor_imageView.setImage(image);
+        } else {
+            image = new Image("File:" + ImageConfig.formatPathRead(ImageConfig.defaultImage), 112, 121, false, true);
+            editDoctor_imageView.setImage(image);
+        }
     }
 
     public void specializationList() {
@@ -333,7 +348,12 @@ public class EditDoctorFormController implements Initializable {
             this.editDoctor_doctorID.setVisible(false);
             this.editDoctor_doctorIDLabel.setVisible(false);
         }
-        setField();
+        if (Objects.equals(Data.edit_doctor_mode, "edit")) {
+            setField();
+        } else {
+            image = new Image("File:" + ImageConfig.formatPathRead(ImageConfig.defaultImage), 112, 121, false, true);
+            editDoctor_imageView.setImage(image);
+        }
         specializationList();
         genderList();
         statusList();

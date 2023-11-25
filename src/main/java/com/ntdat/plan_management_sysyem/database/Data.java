@@ -43,6 +43,7 @@ public class Data {
    public static String temp_doctorGender;
    public static String temp_doctorMobileNumber;
    public static String temp_doctorImagePath;
+   public static Double temp_doctorSalary;
    public static String temp_doctorAddress;
    public static String temp_doctorStatus;
 
