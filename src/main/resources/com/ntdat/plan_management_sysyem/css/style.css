@@ -1,0 +1,7 @@
+.table-row-cell:filled:selected {
+    -fx-background-color: rgba(55, 55, 162, 0.1);
+}
+
+.table-row-cell:filled:selected .text {
+    -fx-fill: black; /* Replace "black" with your desired color */
+}

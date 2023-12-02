@@ -83,15 +83,15 @@ public class EditAppointmentFormController implements Initializable {
 
    public void displayFields() {
       editApp_appointmentID.setText(Data.temp_appID);
-      editApp_fullName.setText(Data.temp_appName);
-      editApp_gender.getSelectionModel().select(Data.temp_appGender);
-      editApp_mobileNumber.setText(Data.temp_appMobileNumber);
-      editApp_address.setText(Data.temp_appAddress);
-      editApp_description.setText(Data.temp_appDescription);
+//      editApp_fullName.setText(Data.temp_appName);
+//      editApp_gender.getSelectionModel().select(Data.temp_appGender);
+//      editApp_mobileNumber.setText(Data.temp_appMobileNumber);
+//      editApp_address.setText(Data.temp_appAddress);
+//      editApp_description.setText(Data.temp_appDescription);
       editApp_diagnosis.setText(Data.temp_appDiagnosis);
       editApp_treatment.setText(Data.temp_appTreatment);
       editApp_doctor.getSelectionModel().select(Data.temp_appDoctor);
-      editApp_specialized.getSelectionModel().select(Data.temp_appSpecialized);
+//      editApp_specialized.getSelectionModel().select(Data.temp_appSpecialized);
       editApp_status.getSelectionModel().select(Data.temp_appStatus);
    }
 
@@ -176,20 +176,14 @@ public class EditAppointmentFormController implements Initializable {
          Date date = new Date();
          java.sql.Date sqlDate = new java.sql.Date(date.getTime());
 
-         if (Data.path == null || "".equals(Data.path)) {
-            String updateData = "UPDATE appointment SET name = '"
-                    + editApp_fullName.getText() + "', gender = '"
-                    + editApp_gender.getSelectionModel().getSelectedItem() + "', moblie_number = '"
-                    + editApp_mobileNumber.getText() + "', address = '"
-                    + editApp_address.getText() + "', description = '"
-                    + editApp_description.getText() + "', diagnosis = '"
-                    + editApp_diagnosis.getText() + "', treatment = '"
-                    + editApp_treatment.getText() + "', doctor = '"
-                    + editApp_doctor.getSelectionModel().getSelectedItem() + "', specialized = '"
-                    + editApp_specialized.getSelectionModel().getSelectedItem() + "', status = '"
-                    + editApp_status.getSelectionModel().getSelectedItem() + "', date_modify = '"
-                    + String.valueOf(sqlDate) + "' "
-                    + "WHERE appointment_id = '" + editApp_appointmentID.getText() + "'";
+//         if (Data.path == null || "".equals(Data.path)) {
+            String updateData = "UPDATE appointment SET "
+                    + " description = '" + editApp_description.getText() + "',"
+                    + " diagnosis = '" + editApp_diagnosis.getText()  + "',"
+                    + " treatment = '" + editApp_treatment.getText() + "',"
+                    + " doctor_id = '" + editApp_doctor.getSelectionModel().getSelectedItem() + "',"
+                    + " status = '" + editApp_status.getSelectionModel().getSelectedItem() + "'"
+                    + " WHERE id = '" + editApp_appointmentID.getText() + "'";
             try {
                if (alert.confirmationMessage("Are you sure you want to Update Appointment ID: " + editApp_appointmentID.getText() + "?")) {
                   prepare = connect.prepareStatement(updateData);
@@ -200,7 +194,7 @@ public class EditAppointmentFormController implements Initializable {
             } catch (Exception e) {
                e.printStackTrace();
             }
-         } else {
+         /*} else {
             try {
                if (alert.confirmationMessage("Are you sure you want to Update Doctor ID: "
                        + editApp_appointmentID.getText() + "?")) {
@@ -241,7 +235,7 @@ public class EditAppointmentFormController implements Initializable {
                e.printStackTrace();
             }
 
-         }
+         }*/
       }
       displayFields();
    }
@@ -256,8 +250,8 @@ public class EditAppointmentFormController implements Initializable {
    @Override
    public void initialize(URL url, ResourceBundle rb) {
       doctorList();
-      genderList();
-      statusList();
+//      genderList();
+//      statusList();
 
       displayFields();
    }

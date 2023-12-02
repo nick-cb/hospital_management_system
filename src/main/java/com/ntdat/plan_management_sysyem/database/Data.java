@@ -60,7 +60,7 @@ public class Data {
    public static String temp_appDescription;
    public static String temp_appDiagnosis;
    public static String temp_appTreatment;
-   public static String temp_appDoctor;
+   public static Integer temp_appDoctor;
    public static String temp_appSpecialized;
    public static String temp_appStatus;
 

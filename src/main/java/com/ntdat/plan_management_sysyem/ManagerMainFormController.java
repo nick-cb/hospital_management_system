@@ -49,6 +49,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
@@ -1057,7 +1058,6 @@ public class ManagerMainFormController implements Initializable {
 
    public void openCreateForm() throws IOException {
       Data.edit_doctor_mode = "add";
-//      Parent root = FXMLLoader.load(getClass().getResource("EditDoctorForm.fxml"));
         FXMLLoader loader = new FXMLLoader(getClass().getResource("EditDoctorForm.fxml"));
         Parent root = loader.load();
         EditDoctorFormController editDoctorFormController = loader.getController();
@@ -1070,7 +1070,25 @@ public class ManagerMainFormController implements Initializable {
 
       ObservableList<AppointmentData> listData = FXCollections.observableArrayList();
 
-      String sql = "SELECT * FROM appointment";
+      String sql = "SELECT " +
+      "appt.*, "
+              + "pt.full_name AS patient_name, "
+              + "pt.moblie_number AS patient_phone, "
+              + "pt.gender AS patient_gender, "
+              + "doc.full_name AS doctor_name, "
+              + "doc.moblie_number AS doctor_phone, "
+              + "doc.specialized AS doctor_specialized, "
+              + "payment.paid_at AS paid_at, "
+              + "COALESCE(payment.total_price, 0) AS total_price, "
+              + "COALESCE(payment.total_days, 0) AS total_days " +
+      "FROM " +
+      "appointment appt " +
+      "LEFT JOIN " +
+      "patient pt ON appt.patient_id = pt.id " +
+      "LEFT JOIN " +
+      "doctor doc ON appt.doctor_id = doc.id " +
+      "LEFT JOIN " +
+      "payment ON appt.id = payment.appointment_id; ";
 
       connect = database.connectDB();
 
@@ -1083,14 +1101,17 @@ public class ManagerMainFormController implements Initializable {
 //            AppointmentData(Integer id, Integer appointmentID, String name, String gender,
 //            Long mobileNumber, String description, String diagnosis, String treatment, String address,
 //            Date date, Date dateModify, Date dateDelete, String status, Date schedule)
-            aData = new AppointmentData(result.getInt("id"), result.getInt("appointment_id"),
-                    result.getString("name"), result.getString("gender"), result.getLong("moblie_number"),
-                    result.getString("description"), result.getString("diagnosis"),
-                    result.getString("treatment"), result.getString("address"),
-                    result.getString("doctor"), result.getString("specialized"),
-                    result.getDate("created_at"), result.getDate("date_modify"),
-                    result.getDate("date_delete"), result.getString("status"),
-                    result.getDate("schedule"));
+            aData = new AppointmentData(result.getInt("id"),
+                    "", "",
+                    Long.parseLong("31431"), result.getString("description"),
+                    result.getString("diagnosis"), result.getString("treatment"),
+                    "", result.getDate("created_at"),
+                    result.getDate("modified_at"), result.getDate("deleted_at"),
+                    result.getString("status"), result.getDate("scheduled_at"),
+                    result.getString("doctor_name"), result.getString("doctor_phone"),
+                    result.getString("doctor_specialized"), result.getString("patient_name"),
+                    result.getString("patient_phone"), result.getString("patient_gender"),
+                    result.getDate("paid_at"), result.getInt("total_days"), result.getDouble("total_price"));
             listData.add(aData);
          }
       } catch (Exception e) {
@@ -1103,16 +1124,120 @@ public class ManagerMainFormController implements Initializable {
 
    public void appointmentDisplayData() {
       appointmentListData = appointmentGetData();
+      ObservableList<TableColumn<AppointmentData, ?>> columns = appointments_tableView.getColumns();
 
-      appointments_appointmentID.setCellValueFactory(new PropertyValueFactory<>("appointmentID"));
-      appointments_name.setCellValueFactory(new PropertyValueFactory<>("name"));
-      appointments_gender.setCellValueFactory(new PropertyValueFactory<>("gender"));
-      appointments_contactNumber.setCellValueFactory(new PropertyValueFactory<>("mobileNumber"));
-      appointments_description.setCellValueFactory(new PropertyValueFactory<>("description"));
-      appointments_date.setCellValueFactory(new PropertyValueFactory<>("date"));
-      appointments_dateModify.setCellValueFactory(new PropertyValueFactory<>("dateModify"));
-      appointments_dateDelete.setCellValueFactory(new PropertyValueFactory<>("dateDelete"));
-      appointments_status.setCellValueFactory(new PropertyValueFactory<>("status"));
+      for (TableColumn<AppointmentData, ?> column : columns) {
+         var columnId = column.getId();
+         switch (columnId) {
+            case "appointments_table_ID":
+               column.setCellValueFactory(new PropertyValueFactory<>("id"));
+               break;
+            case "appointments_table_patient":
+               var columnPatient = (TableColumn<AppointmentData, String>) column;
+               columnPatient.setCellValueFactory(new PropertyValueFactory<>("patientName"));
+               columnPatient.setCellFactory(tc -> new TableCell<>() {
+                    @Override
+                    protected void updateItem(String item, boolean empty) {
+                         super.updateItem(item, empty);
+                         if (item == null || empty) {
+                            setGraphic(null);
+                         } else {
+                            Label nameLabel = new Label("Name: " + item);
+                            nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #000");
+                            Label phoneLabel = new Label("Phone: " + emptyPlaceholder(getTableView().getItems().get(getIndex()).getPatientPhone()));
+                            phoneLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #888");
+                            Label genderLabel = new Label("Gender: " + emptyPlaceholder(getTableView().getItems().get(getIndex()).getGender()));
+                            genderLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #888");
+                            VBox vBox = new VBox(nameLabel, genderLabel, phoneLabel);
+                            vBox.setSpacing(3);
+                            setGraphic(vBox);
+                         }
+                    };
+               });
+               break;
+            case "appointments_table_doctor":
+                var columnDoctor = (TableColumn<AppointmentData, String>) column;
+                columnDoctor.setCellValueFactory(new PropertyValueFactory<>("doctorName"));
+                columnDoctor.setCellFactory(tc -> new TableCell<>() {
+                   @Override
+                   protected void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null || empty) {
+                             setGraphic(null);
+                        } else {
+                             Label nameLabel = new Label("Name: " + item);
+                             nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;  -fx-text-fill: #000");
+                             Label phoneLabel = new Label("Phone: " + emptyPlaceholder(getTableView().getItems().get(getIndex()).getDoctorPhone()));
+                             phoneLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #888");
+                             Label specializedLabel = new Label("Specialized: " + emptyPlaceholder(getTableView().getItems().get(getIndex()).getDoctorSpecialized()));
+                             specializedLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #888");
+                             VBox vBox = new VBox(nameLabel, specializedLabel, phoneLabel);
+                             vBox.setSpacing(3);
+                             setGraphic(vBox);
+                        }
+                     };
+                });
+               break;
+            case "appointments_table_schedule":
+               column.setCellValueFactory(new PropertyValueFactory<>("scheduledAt"));
+               break;
+            case "appointments_table_status":
+               column.setCellValueFactory(new PropertyValueFactory<>("status"));
+               var columnStatus = (TableColumn<AppointmentData, String>) column;
+               columnStatus.setCellFactory(tc -> new TableCell<>() {
+                  @Override
+                  protected void updateItem(String item, boolean empty) {
+                     super.updateItem(item, empty);
+                     if (item == null || empty) {
+                        setGraphic(null);
+                     } else {
+                        String status = "active";
+                        var paidAt = getTableView().getItems().get(getIndex()).getPaidAt();
+                        if (paidAt != null) {
+                           status = "paid";
+                        }
+                        Label statusLabel = new Label(status);
+                        statusLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;  -fx-text-fill: #000");
+                        if (status.equals("paid")) {
+                           Label paidAtLabel = new Label("Paid at: " + getTableView().getItems().get(getIndex()).getPaidAt());
+                           paidAtLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #888");
+                           VBox vBox = new VBox(statusLabel, paidAtLabel);
+                           vBox.setSpacing(3);
+                           setGraphic(vBox);
+                        } else {
+                           VBox vBox = new VBox(statusLabel);
+                           vBox.setSpacing(3);
+                           setGraphic(vBox);
+                        }
+                     }
+                  };
+               });
+               break;
+            case "appointments_table_payment":
+               var columnPayment = (TableColumn<AppointmentData, Double>) column;
+               columnPayment.setCellValueFactory(new PropertyValueFactory<>("totalPrice"));
+               columnPayment.setCellFactory(tc -> new TableCell<>() {
+                   @Override
+                   protected void updateItem(Double item, boolean empty) {
+                       super.updateItem(item, empty);
+                       if (item == null || empty) {
+                           setGraphic(null);
+                       } else {
+                          Label totalDaysLabel = new Label("Total days: " + getTableView().getItems().get(getIndex()).getTotalDays());
+                          totalDaysLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #000");
+                          Label totalPriceLabel = new Label("Total price: " + NumberFormat.getNumberInstance().format(getTableView().getItems().get(getIndex()).getTotalPrice()));
+                          totalPriceLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #000");
+                          VBox vBox = new VBox(totalDaysLabel, totalPriceLabel);
+                           vBox.setSpacing(3);
+                           setGraphic(vBox);
+                       }
+                   };
+               });
+               break;
+            default:
+               break;
+         }
+      }
 
       appointments_tableView.setItems(appointmentListData);
       appointments_tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
@@ -1146,6 +1271,11 @@ public class ManagerMainFormController implements Initializable {
                           + "    -fx-text-fill: #fff;\n"
                           + "    -fx-font-size: 14px;\n"
                           + "    -fx-font-family: Arial;");
+                  // disable editbutton if status is paid
+                  var paidAt = getTableView().getItems().get(getIndex()).getPaidAt();
+                  if (paidAt != null) {
+                      editButton.setDisable(true);
+                  }
 
                   editButton.setOnAction((ActionEvent event) -> {
                      try {
@@ -1603,6 +1733,14 @@ public class ManagerMainFormController implements Initializable {
    public void refreshDoctorTable() {
       this.doctorListData = this.doctorGetData();
       this.doctors_tableView.setItems(doctorListData);
+   }
+
+   public String emptyPlaceholder(String text) {
+      if (text.isEmpty()) {
+         return "N/A";
+      } else {
+         return text;
+      }
    }
 
    /**

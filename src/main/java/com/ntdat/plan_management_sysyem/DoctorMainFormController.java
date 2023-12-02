@@ -839,7 +839,11 @@ public class DoctorMainFormController implements Initializable {
                     result.getString("diagnosis"), result.getString("treatment"),
                     result.getString("address"), result.getDate("created_at"),
                     result.getDate("date_modify"), result.getDate("date_delete"),
-                    result.getString("status"), result.getDate("schedule"));
+                    result.getString("status"), result.getDate("schedule"),
+                    result.getString("doctor_name"), result.getString("doctor_phone"),
+                    result.getString("doctor_specialized"), result.getString("patient_name"),
+                    result.getString("patient_phone"), result.getString("patient_gender"),
+                    result.getDate("paid_at"), result.getInt("total_days"), result.getDouble("total_price"));
             // STORE ALL DATA
             listData.add(appData);
          }

@@ -27,7 +27,9 @@ public class App extends Application {
       stage.setMinWidth(340);
       stage.setMinHeight(580);
       stage.setTitle("Hospital Management System" + (breadcrumb != null && !breadcrumb.isEmpty() ? " | " + breadcrumb : ""));
-      stage.setScene(new Scene(loadFXML(fxml)));
+      var scene = new Scene(loadFXML(fxml));
+      scene.getStylesheets().add(App.class.getResource("css/style.css").toExternalForm());
+      stage.setScene(scene);
       stage.show();
    }
 

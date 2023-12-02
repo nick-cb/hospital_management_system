@@ -23,18 +23,27 @@ public class AppointmentData {
    private String treatment;
    private Long mobileNumber;
    private String address;
-   private Date date;
-   private Date dateModify;
-   private Date dateDelete;
+   private Date createdAt;
+   private Date modifiedAt;
+   private Date deletedAt;
    private String status;
-   private String doctorID;
+   private Integer doctorID;
    private String specialized;
-   private Date schedule;
+   private Date scheduledAt;
+   private String doctorName;
+   private String doctorPhone;
+   private String doctorSpecialized;
+   private String patientName;
+   private String patientPhone;
+   private String patientGender;
+   private Date paidAt;
+   private Integer totalDays;
+   private Double totalPrice;
 
    public AppointmentData(Integer id, Integer appointmentID, String name, String gender,
-           Long mobileNumber, String description, String diagnosis, String treatment, String address,
-           String doctorID, String specialized,
-           Date date, Date dateModify, Date dateDelete, String status, Date schedule) {
+                          Long mobileNumber, String description, String diagnosis, String treatment, String address,
+                          Integer doctorID, String specialized,
+                          Date createdAt, Date modifiedAt, Date deletedAt, String status, Date scheduledAt) {
       this.id = id;
       this.appointmentID = appointmentID;
       this.name = name;
@@ -46,17 +55,21 @@ public class AppointmentData {
       this.address = address;
       this.doctorID = doctorID;
       this.specialized = specialized;
-      this.date = date;
-      this.dateModify = dateModify;
-      this.dateDelete = dateDelete;
+      this.createdAt = createdAt;
+      this.modifiedAt = modifiedAt;
+      this.deletedAt = deletedAt;
       this.status = status;
-      this.schedule = schedule;
+      this.scheduledAt = scheduledAt;
 
    }
 
    public AppointmentData(Integer appointmentID, String name, String gender,
-           Long mobileNumber, String description, String diagnosis, String treatment, String address,
-           Date date, Date dateModify, Date dateDelete, String status, Date schedule) {
+                          Long mobileNumber, String description, String diagnosis,
+                          String treatment, String address, Date createdAt, Date modifiedAt,
+                          Date deletedAt, String status, Date scheduledAt, String doctorName,
+                          String doctorPhone, String doctorSpecialized, String patientName,
+                          String patientPhone, String patientGender, Date paidAt,
+                          Integer totalDays, Double totalPrice) {
 
       this.appointmentID = appointmentID;
       this.name = name;
@@ -66,31 +79,39 @@ public class AppointmentData {
       this.diagnosis = diagnosis;
       this.treatment = treatment;
       this.address = address;
-      this.date = date;
-      this.dateModify = dateModify;
-      this.dateDelete = dateDelete;
+      this.createdAt = createdAt;
+      this.modifiedAt = modifiedAt;
+      this.deletedAt = deletedAt;
       this.status = status;
-      this.schedule = schedule;
-
+      this.scheduledAt = scheduledAt;
+        this.doctorName = doctorName;
+        this.doctorPhone = doctorPhone;
+        this.doctorSpecialized = doctorSpecialized;
+        this.patientName = patientName;
+        this.patientPhone = patientPhone;
+        this.patientGender = patientGender;
+        this.paidAt = paidAt;
+        this.totalDays = totalDays;
+        this.totalPrice = totalPrice;
    }
 
    public AppointmentData(Integer appointmentID, String name,
-           String description, Date schedule, String status) {
+                          String description, Date scheduledAt, String status) {
       this.appointmentID = appointmentID;
       this.name = name;
       this.description = description;
-      this.schedule = schedule;
+      this.scheduledAt = scheduledAt;
       this.status = status;
    }
 
    public AppointmentData(Integer appointmentID, String description,
-           String diagnosis, String treatment, String doctorID, Date schedule) {
+           String diagnosis, String treatment, Integer doctorID, Date scheduledAt) {
       this.appointmentID = appointmentID;
       this.description = description;
       this.diagnosis = diagnosis;
       this.treatment = treatment;
       this.doctorID = doctorID;
-      this.schedule = schedule;
+      this.scheduledAt = scheduledAt;
    }
 
    public Integer getId() {
@@ -129,7 +150,7 @@ public class AppointmentData {
       return address;
    }
 
-   public String getDoctorID() {
+   public Integer getDoctorID() {
       return doctorID;
    }
 
@@ -137,23 +158,72 @@ public class AppointmentData {
       return specialized;
    }
 
-   public Date getDate() {
-      return date;
+   public Date getCreatedAt() {
+      return createdAt;
    }
 
-   public Date getDateModify() {
-      return dateModify;
+   public Date getModifiedAt() {
+      return modifiedAt;
    }
 
-   public Date getDateDelete() {
-      return dateDelete;
+   public Date getDeletedAt() {
+      return deletedAt;
    }
 
    public String getStatus() {
       return status;
    }
 
-   public Date getSchedule() {
-      return schedule;
+   public Date getScheduledAt() {
+      return scheduledAt;
+   }
+
+   public String getDoctorName() {
+       return doctorName;
+   }
+
+   public String getDoctorPhone() {
+        if (doctorPhone == null) {
+           return "";
+        }
+       return doctorPhone;
+   }
+
+   public String getDoctorSpecialized() {
+      if (doctorSpecialized == null) {
+         return "";
+      }
+
+      return doctorSpecialized;
+   }
+
+   public String getPatientName() {
+       return patientName;
+   }
+
+   public String getPatientPhone() {
+      if (patientPhone == null) {
+         return "";
+      }
+      return patientPhone;
+   }
+
+   public String getPatientGender() {
+        if (patientGender == null) {
+           return "";
+        }
+        return patientGender;
+   }
+
+   public Date getPaidAt() {
+         return paidAt;
+   }
+
+   public Integer getTotalDays() {
+        return totalDays;
+   }
+
+   public Double getTotalPrice() {
+         return totalPrice;
    }
 }

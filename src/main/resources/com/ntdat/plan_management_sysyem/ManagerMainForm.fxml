@@ -100,13 +100,8 @@
                               <FontIcon iconLiteral="fa-clipboard:24:WHITE" />
                            </graphic>
                         </Button>
-                        <Button fx:id="payment_btn" layoutX="7.0" layoutY="387.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="40.0" prefWidth="200.0" styleClass="nav-btn-1" stylesheets="@css/MainFormDesign.css" text="Payment">
-                           <graphic>
-                              <FontIcon iconLiteral="fa-credit-card:24:WHITE" />
-                           </graphic>
-                        </Button>
-                        <Label layoutX="13.0" layoutY="435.0" text="Profile" textFill="WHITE" />
-                        <Button fx:id="profile_btn" layoutX="7.0" layoutY="460.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="40.0" prefWidth="200.0" styleClass="nav-btn-1" stylesheets="@css/MainFormDesign.css" text="Profile Setting">
+                        <Label layoutX="10.0" layoutY="386.0" text="Profile" textFill="WHITE" />
+                        <Button fx:id="profile_btn" layoutX="4.0" layoutY="411.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="40.0" prefWidth="200.0" styleClass="nav-btn-1" stylesheets="@css/MainFormDesign.css" text="Profile Setting">
                            <graphic>
                               <FontIcon iconLiteral="fa-cogs:24:WHITE" />
                            </graphic>
@@ -282,7 +277,7 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="patients_form" layoutX="1.0" prefHeight="560.0" prefWidth="886.0" styleClass="white-bg" stylesheets="@css/MainFormDesign.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="patients_form" layoutX="1.0" prefHeight="560.0" prefWidth="886.0" styleClass="white-bg" stylesheets="@css/MainFormDesign.css" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="9.0" layoutY="12.0" prefHeight="537.0" prefWidth="868.0" stylesheets="@css/MainFormDesign.css" AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="9.0" AnchorPane.topAnchor="12.0">
                                  <styleClass>
@@ -320,7 +315,7 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="appointments_form" layoutX="5.0" layoutY="5.0" prefHeight="560.0" prefWidth="886.0" styleClass="white-bg" stylesheets="@css/MainFormDesign.css" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="appointments_form" layoutX="5.0" layoutY="5.0" prefHeight="560.0" prefWidth="886.0" styleClass="white-bg" stylesheets="@css/MainFormDesign.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="9.0" layoutY="12.0" prefHeight="537.0" prefWidth="868.0" stylesheets="@css/MainFormDesign.css" AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="9.0" AnchorPane.topAnchor="12.0">
                                  <styleClass>
@@ -336,16 +331,13 @@
                                     </Label>
                                     <TableView fx:id="appointments_tableView" layoutX="13.0" layoutY="56.0" prefHeight="467.0" prefWidth="843.0" stylesheets="@css/MainFormDesign.css" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="12.0" AnchorPane.topAnchor="56.0">
                                        <columns>
-                                          <TableColumn fx:id="appointments_appointmentID" prefWidth="65.0" text="Appointment ID" />
-                                          <TableColumn fx:id="appointments_name" prefWidth="110.0" text="Name" />
-                                          <TableColumn fx:id="appointments_gender" prefWidth="70.0" text="Gender" />
-                                          <TableColumn fx:id="appointments_contactNumber" prefWidth="85.0" text="Contact" />
-                                          <TableColumn fx:id="appointments_description" prefWidth="109.0" text="Description" />
-                                          <TableColumn fx:id="appointments_date" prefWidth="73.0" text="Date" />
-                                          <TableColumn fx:id="appointments_dateModify" prefWidth="92.0" text="Date Modify" />
-                                          <TableColumn fx:id="appointments_dateDelete" prefWidth="76.0" text="Date Delete" />
-                                          <TableColumn fx:id="appointments_status" prefWidth="81.0" text="Status" />
-                                          <TableColumn fx:id="appointments_action" prefWidth="81.0" text="Action" />
+                                          <TableColumn fx:id="appointments_table_ID" prefWidth="59.0" text="ID" />
+                                          <TableColumn fx:id="appointments_table_patient" prefWidth="154.0" text="Patient" />
+                                          <TableColumn fx:id="appointments_table_doctor" prefWidth="170.0" text="Doctor" />
+                                          <TableColumn fx:id="appointments_table_schedule" minWidth="0.0" prefWidth="117.0" text="Schedule date" />
+                                          <TableColumn fx:id="appointments_table_status" minWidth="0.0" prefWidth="127.0" text="Status" />
+                                          <TableColumn fx:id="appointments_table_payment" prefWidth="103.0" text="Payment" />
+                                          <TableColumn fx:id="appointments_action" prefWidth="131.0" text="Action" />
                                        </columns>
                                     </TableView>
                                  </children>
