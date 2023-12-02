@@ -1151,7 +1151,7 @@ public class DoctorMainFormController implements Initializable {
             Data.temp_PatientID = 0;
             Data.temp_name = "";
             Data.temp_gender = "";
-            Data.temp_number = Long.parseLong("0");
+            Data.temp_number = "";
             Data.temp_address = "";
             Data.temp_status = "";
             Data.temp_date = "";

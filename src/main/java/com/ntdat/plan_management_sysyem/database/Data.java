@@ -4,6 +4,8 @@
  */
 package com.ntdat.plan_management_sysyem.database;
 
+import java.sql.Date;
+
 /*
 * Data store
 * TODO: Using a persistent storage instead of this
@@ -25,14 +27,17 @@ public class Data {
 
    public static String[] specialization = {"Allergist", "Dermatologist", "Ophthalmologist", "Gynecologist", "Cardiologist"};
 
+   public static String edit_patient_mode = "edit";
    public static Integer temp_PatientID;
    public static String temp_name;
    public static String temp_gender;
-   public static Long temp_number;
+   public static String temp_number;
    public static String temp_address;
    public static String temp_status;
    public static String temp_date;
    public static String temp_path;
+   public static Date temp_birthday;
+   public static String temp_password;
 
    public static String edit_doctor_mode = "add";
    public static String temp_doctorID;

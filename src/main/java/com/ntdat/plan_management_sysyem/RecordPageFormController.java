@@ -100,10 +100,10 @@ public class RecordPageFormController implements Initializable {
 //            Long mobileNumber, String address, Date date
 //            , Date dateModify, Date dateDelete)
          while (result.next()) {
-            pData = new PatientsData(result.getInt("id"), result.getInt("patient_id"),
-                    result.getString("full_name"), result.getString("gender"), result.getLong("moblie_number"),
+            pData = new PatientsData(result.getInt("id"), 0,
+                    result.getString("full_name"), result.getString("gender"), result.getString("moblie_number"),
                     result.getString("address"), result.getString("status"), result.getDate("created_at"),
-                    result.getDate("date_modify"), result.getDate("date_delete"));
+                    result.getDate("modified_at"), result.getDate("deleted_at"));
             listData.add(pData);
          }
       } catch (SQLException e) {
@@ -191,8 +191,8 @@ public class RecordPageFormController implements Initializable {
                         return;
                      }
 
-                     String deleteData = "UPDATE patient SET deleted_at = ? WHERE patient_id = "
-                             + pData.getPatientID();
+                     String deleteData = "UPDATE patient SET deleted_at = ? WHERE id = "
+                             + pData.getId();
 
                      try {
                         if (alert.confirmationMessage("Are you sure you want to delete Patient ID: " + pData.getPatientID() + "?")) {

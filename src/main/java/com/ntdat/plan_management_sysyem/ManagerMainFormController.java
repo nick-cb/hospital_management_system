@@ -23,7 +23,6 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
@@ -754,7 +753,6 @@ public class ManagerMainFormController implements Initializable {
                         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                            @Override
                            public void handle(WindowEvent windowEvent) {
-                              System.out.println("Closed");
                               doctorListData = doctorGetData();
                               doctors_tableView.setItems(doctorListData);
                            }
@@ -834,7 +832,14 @@ public class ManagerMainFormController implements Initializable {
 
       ObservableList<PatientsData> listData = FXCollections.observableArrayList();
 
-      String sql = "SELECT * FROM patient";
+      String sql = "SELECT p.id, p.full_name, p.password, p.moblie_number, p.gender, p.address, p.image, p.created_at, p.modified_at, p.deleted_at, p.status, p.birthday, "
+              + " SUM(payment.total_price) as total_spent, COUNT(appointment.id) as total_appt"
+              + " FROM patient p"
+              + " left join appointment on p.id = appointment.patient_id"
+              + " left join payment on appointment.id = payment.appointment_id"
+              + " WHERE p.deleted_at IS NULL"
+              + " GROUP BY p.id, p.full_name, p.password, p.moblie_number, p.gender, p.address, p.image, p.created_at, p.modified_at, p.deleted_at, p.status, p.birthday";
+
 
       connect = database.connectDB();
 
@@ -845,20 +850,17 @@ public class ManagerMainFormController implements Initializable {
          PatientsData pData;
 
          while (result.next()) {
-//                PatientsData(Integer id, Integer patientID, String password, String fullName, Long mobileNumber
-//            , String address, String image, String description, String diagnosis, String treatment
-//            , String doctor, String specialized, Date date, Date dateModify
-//            , Date dateDelete, String status)
-            pData = new PatientsData(result.getInt("id"), result.getInt("patient_id"),
+
+            pData = new PatientsData(result.getInt("id"), 0,
                     result.getString("password"), result.getString("full_name"),
-                    result.getLong("moblie_number"), result.getString("gender"),
+                    result.getString("moblie_number"), result.getString("gender"),
                     result.getString("address"),
-                    result.getString("image"), result.getString("description"),
-                    result.getString("diagnosis"),
-                    result.getString("treatment"), result.getString("doctor"),
-                    result.getString("specialized"), result.getDate("created_at"),
-                    result.getDate("date_modify"), result.getDate("date_delete"),
-                    result.getString("status"));
+                    result.getString("image"), "",
+                    "",
+                    "", "",
+                    "", result.getDate("birthday"),
+                    result.getDate("modified_at"), result.getDate("deleted_at"),
+                    result.getString("status"), result.getInt("total_appt"), result.getDouble("total_spent"));
 
             listData.add(pData);
          }
@@ -873,16 +875,56 @@ public class ManagerMainFormController implements Initializable {
 
    public void patientDisplayData() {
       patientListData = patientGetData();
+      ObservableList<TableColumn<PatientsData, ?>> columns = patients_tableView.getColumns();
 
-      patients_col_patientID.setCellValueFactory(new PropertyValueFactory<>("patientID"));
-      patients_col_name.setCellValueFactory(new PropertyValueFactory<>("fullName"));
-      patients_col_gender.setCellValueFactory(new PropertyValueFactory<>("gender"));
-      patients_col_contactNumber.setCellValueFactory(new PropertyValueFactory<>("mobileNumber"));
-      patients_col_description.setCellValueFactory(new PropertyValueFactory<>("description"));
-      patients_col_date.setCellValueFactory(new PropertyValueFactory<>("date"));
-      patients_col_dateModify.setCellValueFactory(new PropertyValueFactory<>("dateModify"));
-      patients_col_dateDelete.setCellValueFactory(new PropertyValueFactory<>("dateDelete"));
-      patients_col_status.setCellValueFactory(new PropertyValueFactory<>("status"));
+      for (TableColumn<PatientsData, ?> column : columns) {
+         var columnId = column.getId();
+         switch (columnId) {
+            case "patients_col_name":
+                column.setCellValueFactory(new PropertyValueFactory<>("fullName"));
+                break;
+            case "patients_col_gender":
+               column.setCellValueFactory(new PropertyValueFactory<>("gender"));
+               break;
+            case "patients_col_contactNumber":
+                column.setCellValueFactory(new PropertyValueFactory<>("mobileNumber"));
+                break;
+            case "patients_col_date":
+                column.setCellValueFactory(new PropertyValueFactory<>("birthday"));
+                break;
+            case "patients_col_address":
+                column.setCellValueFactory(new PropertyValueFactory<>("address"));
+                break;
+            case "patients_col_total_appt":
+                column.setCellValueFactory(new PropertyValueFactory<>("totalAppointment"));
+                break;
+            case "patients_col_total_spent":
+               var columnSpent = (TableColumn<PatientsData, Double>) column;
+                columnSpent.setCellValueFactory(new PropertyValueFactory<>("totalSpent"));
+                columnSpent.setCellFactory(new Callback<TableColumn<PatientsData, Double>, TableCell<PatientsData, Double>>() {
+                   @Override
+                   public TableCell<PatientsData, Double> call(TableColumn<PatientsData, Double> param) {
+                      return new TableCell<PatientsData, Double>() {
+                         @Override
+                         protected void updateItem(Double item, boolean empty) {
+                            super.updateItem(item, empty);
+                            if (item == null || empty) {
+                               setText(null);
+                            } else {
+                               setText(NumberFormat.getNumberInstance().format(item));
+                            }
+                         }
+                      };
+                   }
+                });
+                break;
+            case "patients_col_status":
+                column.setCellValueFactory(new PropertyValueFactory<>("status"));
+                break;
+            default:
+               break;
+         }
+      }
 
       patients_tableView.setItems(patientListData);
       patients_tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
@@ -894,6 +936,7 @@ public class ManagerMainFormController implements Initializable {
       patientListData = patientGetData();
 
       Callback<TableColumn<PatientsData, String>, TableCell<PatientsData, String>> cellFactory = (TableColumn<PatientsData, String> param) -> {
+         final ManagerMainFormController managerController = this;
          final TableCell<PatientsData, String> cell = new TableCell<PatientsData, String>() {
             public void updateItem(String item, boolean empty) {
                super.updateItem(item, empty);
@@ -919,29 +962,7 @@ public class ManagerMainFormController implements Initializable {
 
                   editButton.setOnAction((ActionEvent event) -> {
                      try {
-
-                        PatientsData pData = patients_tableView.getSelectionModel().getSelectedItem();
-                        int num = patients_tableView.getSelectionModel().getSelectedIndex();
-
-                        if ((num - 1) < -1) {
-                           alert.errorMessage("Please select item first");
-                           return;
-                        }
-
-                        Data.temp_PatientID = pData.getPatientID();
-                        Data.temp_address = pData.getAddress();
-                        Data.temp_name = pData.getFullName();
-                        Data.temp_gender = pData.getGender();
-                        Data.temp_number = pData.getMobileNumber();
-                        Data.temp_status = pData.getStatus();
-
-                        // NOW LETS CREATE FXML FOR EDIT PATIENT FORM
-                        Parent root = FXMLLoader.load(getClass().getResource("EditPatientForm.fxml"));
-                        Stage stage = new Stage();
-
-                        stage.setScene(new Scene(root));
-                        stage.show();
-
+                        openPatientEditForm("edit");
                      } catch (Exception e) {
                         e.printStackTrace();
                      }
@@ -957,18 +978,17 @@ public class ManagerMainFormController implements Initializable {
                      }
 
                      String deleteData = "UPDATE patient SET deleted_at = ? WHERE id = '"
-                             + pData.getPatientID() + "'";
+                             + pData.getId() + "'";
 
                      try {
-                        if (alert.confirmationMessage("Are you sure you want to delete Patient ID: " + pData.getPatientID() + "?")) {
+                        if (alert.confirmationMessage("Are you sure you want to delete Patient ID: " + pData.getId() + "?")) {
                            prepare = connect.prepareStatement(deleteData);
                            Date date = new Date();
                            java.sql.Date sqlDate = new java.sql.Date(date.getTime());
 
                            prepare.setString(1, String.valueOf(sqlDate));
                            prepare.executeUpdate();
-
-                           doctorGetData();
+                           managerController.refreshPatientTable();
                            alert.successMessage("Deleted Successfully!");
 
                         }
@@ -993,6 +1013,50 @@ public class ManagerMainFormController implements Initializable {
       patients_tableView.setItems(patientListData);
 
    }
+
+   public void openCreatePatient() throws IOException {
+      openPatientEditForm("add");
+   }
+   public void openPatientEditForm(String mode) throws IOException {
+      if (mode.equals("edit")) {
+         PatientsData pData = patients_tableView.getSelectionModel().getSelectedItem();
+         int num = patients_tableView.getSelectionModel().getSelectedIndex();
+         if ((num - 1) < -1) {
+            alert.errorMessage("Please select item first");
+            return;
+         }
+         Data.edit_patient_mode = "edit";
+         Data.temp_PatientID = pData.getId();
+         Data.temp_address = pData.getAddress();
+         Data.temp_name = pData.getFullName();
+         Data.temp_gender = pData.getGender();
+         Data.temp_number = pData.getMobileNumber();
+         Data.temp_status = pData.getStatus();
+         Data.temp_birthday = pData.getBirthday();
+         Data.temp_password = pData.getPassword();
+         Data.temp_path = pData.getImage();
+      } else {
+         Data.edit_patient_mode = "add";
+      }
+
+      FXMLLoader loader = new FXMLLoader(getClass().getResource("EditPatientForm.fxml"));
+      Parent root = loader.load();
+      EditPatientFormController controller = loader.getController();
+      controller.setManagerMainFormController(this);
+      Stage stage = new Stage();
+
+      stage.setScene(new Scene(root));
+      stage.show();
+
+//                        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+//                           @Override
+//                           public void handle(WindowEvent windowEvent) {
+//                              patientListData = patientGetData();
+//                              patients_tableView.setItems(patientListData);
+//                           }
+//                        });
+   }
+
 
    public void openCreateForm() throws IOException {
       Data.edit_doctor_mode = "add";
@@ -1234,12 +1298,12 @@ public class ManagerMainFormController implements Initializable {
 
       Data.temp_PatientID = pData.getPatientID();
       Data.temp_name = pData.getFullName();
-      Data.temp_date = String.valueOf(pData.getDate());
+      Data.temp_date = String.valueOf(pData.getBirthday());
 
       payment_patientID.setText(String.valueOf(pData.getPatientID()));
       payment_name.setText(pData.getFullName());
       payment_doctor.setText(pData.getDoctor());
-      payment_date.setText(String.valueOf(pData.getDate()));
+      payment_date.setText(String.valueOf(pData.getBirthday()));
    }
 
    public void paymentCheckOutBtn() {
@@ -1535,6 +1599,11 @@ public class ManagerMainFormController implements Initializable {
             }
          }
       }.start();
+   }
+
+   public void refreshPatientTable() {
+      this.patientListData = this.patientGetData();
+      this.patients_tableView.setItems(this.patientListData);
    }
 
    /**

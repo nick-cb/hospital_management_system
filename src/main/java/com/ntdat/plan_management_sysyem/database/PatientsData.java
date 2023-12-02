@@ -8,6 +8,8 @@ package com.ntdat.plan_management_sysyem.database;
  *
  * @author thanh
  */
+import com.ntdat.plan_management_sysyem.utils.ImageConfig;
+
 import java.sql.Date;
 
 public class PatientsData {
@@ -16,7 +18,7 @@ public class PatientsData {
    private Integer patientID;
    private String password;
    private String fullName;
-   private Long mobileNumber;
+   private String mobileNumber;
    private String address;
    private String image;
    private String description;
@@ -25,15 +27,17 @@ public class PatientsData {
    private String doctor;
    private String specialized;
    private String gender;
-   private Date date;
-   private Date dateModify;
-   private Date dateDelete;
+   private Date birthday;
+   private Date modifiedAt;
+   private Date deletedAt;
    private String status;
+   private int totalAppointment = 0;
+   private Double totalSpent = 0.0;
 
-   public PatientsData(Integer id, Integer patientID, String password, String fullName, Long mobileNumber,
-            String gender, String address, String image, String description, String diagnosis, String treatment,
-            String doctor, String specialized, Date date, Date dateModify,
-            Date dateDelete, String status) {
+   public PatientsData(Integer id, Integer patientID, String password, String fullName, String mobileNumber,
+                       String gender, String address, String image, String description, String diagnosis, String treatment,
+                       String doctor, String specialized, Date birthday, Date modifiedAt,
+                       Date deletedAt, String status, int totalAppointment, Double totalSpent) {
       this.id = id;
       this.patientID = patientID;
       this.password = password;
@@ -47,15 +51,17 @@ public class PatientsData {
       this.treatment = treatment;
       this.doctor = doctor;
       this.specialized = specialized;
-      this.date = date;
-      this.dateModify = dateModify;
-      this.dateDelete = dateDelete;
+      this.birthday = birthday;
+      this.modifiedAt = modifiedAt;
+      this.deletedAt = deletedAt;
       this.status = status;
+      this.totalAppointment = totalAppointment;
+      this.totalSpent = totalSpent;
    }
 
    public PatientsData(Integer id, Integer patientID, String fullName, String gender,
-           Long mobileNumber, String address, String status, Date date,
-            Date dateModify, Date dateDelete) {
+                       String mobileNumber, String address, String status, Date birthday,
+                       Date modifiedAt, Date deletedAt) {
       this.id = id;
       this.patientID = patientID;
       this.fullName = fullName;
@@ -63,14 +69,14 @@ public class PatientsData {
       this.mobileNumber = mobileNumber;
       this.address = address;
       this.status = status;
-      this.date = date;
-      this.dateModify = dateModify;
-      this.dateDelete = dateDelete;
+      this.birthday = birthday;
+      this.modifiedAt = modifiedAt;
+      this.deletedAt = deletedAt;
    }
 
    public PatientsData(Integer id, Integer patientID, String fullName, String gender,
             String description, String diagnosis, String treatment,
-            String doctor, String image, Date date) {
+            String doctor, String image, Date birthday) {
       this.id = id;
       this.patientID = patientID;
       this.fullName = fullName;
@@ -80,17 +86,17 @@ public class PatientsData {
       this.treatment = treatment;
       this.doctor = doctor;
       this.image = image;
-      this.date = date;
+      this.birthday = birthday;
    }
 
    public PatientsData(Integer id, Integer patientID, String description,
-            String diagnosis, String treatment, Date date) {
+            String diagnosis, String treatment, Date birthday) {
       this.id = id;
       this.patientID = patientID;
       this.description = description;
       this.diagnosis = diagnosis;
       this.treatment = treatment;
-      this.date = date;
+      this.birthday = birthday;
    }
 
    public Integer getId() {
@@ -121,15 +127,24 @@ public class PatientsData {
       return diagnosis;
    }
 
-   public Long getMobileNumber() {
+   public String getMobileNumber() {
+      if (mobileNumber == null) {
+         return "";
+      }
       return mobileNumber;
    }
 
    public String getAddress() {
+      if (address == null) {
+         return "";
+      }
       return address;
    }
 
    public String getImage() {
+      if (image == null) {
+         return ImageConfig.defaultImage;
+      }
       return image;
    }
 
@@ -145,19 +160,30 @@ public class PatientsData {
       return specialized;
    }
 
-   public Date getDate() {
-      return date;
+   public Date getBirthday() {
+      if (birthday == null) {
+         return new Date(0);
+      }
+      return birthday;
    }
 
-   public Date getDateModify() {
-      return dateModify;
+   public Date getModifiedAt() {
+      return modifiedAt;
    }
 
-   public Date getDateDelete() {
-      return dateDelete;
+   public Date getDeletedAt() {
+      return deletedAt;
    }
 
    public String getStatus() {
       return status;
    }
+
+    public int getTotalAppointment() {
+        return totalAppointment;
+    }
+
+    public Double getTotalSpent() {
+        return totalSpent;
+    }
 }
