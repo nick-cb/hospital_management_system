@@ -15,28 +15,28 @@ import com.ntdat.plan_management_sysyem.utils.AlertMessage;
  * @author thanh
  */
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
-import com.ntdat.plan_management_sysyem.utils.AppConfig;
+import com.ntdat.plan_management_sysyem.utils.ImageConfig;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 public class EditAppointmentFormController implements Initializable {
    public String mode = "edit";
@@ -77,9 +77,13 @@ public class EditAppointmentFormController implements Initializable {
    @FXML
    private ComboBox<String> editApp_status;
 
+   @FXML
+   private HBox doctor_list;
+
    private Connection connect;
    private PreparedStatement prepare;
    private ResultSet result;
+   private Integer selectedDoctorID;
 
    private AlertMessage alert = new AlertMessage();
    private ManagerMainFormController managerMainFormController = new ManagerMainFormController();
@@ -98,23 +102,95 @@ public class EditAppointmentFormController implements Initializable {
 //      editApp_status.getSelectionModel().select(Data.temp_appStatus);
    }
 
-   public void doctorList() {
-      String sql = "SELECT * FROM doctor WHERE deleted_at IS NULL";
+   public void showDoctorList() {
+      var specialize = editApp_specialized.getSelectionModel().getSelectedItem();
+
+      String sql = specialize == null
+              ? "SELECT * FROM doctor WHERE deleted_at IS NULL"
+              : "SELECT * FROM doctor WHERE deleted_at IS NULL AND specialized = '" + specialize + "'";
 
       connect = database.connectDB();
 
       try {
          prepare = connect.prepareStatement(sql);
          result = prepare.executeQuery();
-         ObservableList listData = FXCollections.observableArrayList();
+         doctor_list.getChildren().clear();
+         var previousSelectedExist = false;
          while (result.next()) {
-            listData.add(result.getString("code"));
+            // Create card for each doctor
+            VBox card = new VBox();
+            card.getStyleClass().add("shadow radius bg-white");
+            var path = result.getString("image");
+            if (path == null || path.isEmpty()) {
+               path = ImageConfig.defaultImage;
+            } else {
+               path = ImageConfig.formatPathRead(path);
+            }
+            Image image = new Image("File:" + path);
+            ImageView imageView = new ImageView(image);
+            Circle circle = new Circle();
+            imageView.setFitHeight(70);
+            imageView.setFitWidth(70);
+            circle.setRadius(Math.min(imageView.getFitWidth(), imageView.getFitHeight() / 2));
+            circle.setCenterX(imageView.getFitWidth() / 2);
+            circle.setCenterY(imageView.getFitHeight() / 2);
+            imageView.setClip(circle);
+            // apply light shadow to imageview
+//            imageView.setEffect(new javafx.scene.effect.DropShadow(20, javafx.scene.paint.Color.BLACK));
+            Label name = new Label(result.getString("full_name"));
+            name.setStyle("-fx-font-size: 16px; -fx-font-weight: bold");
+            Label specialized = new Label(result.getString("specialized"));
+            specialized.setStyle("-fx-font-size: 12px;");
+            Label mobileNumber = new Label(emptyPlaceholder(result.getString("mobile_number")));
+            mobileNumber.setStyle("-fx-font-size: 12px;");
+            VBox detail = new VBox();
+            detail.getChildren().addAll(specialized, mobileNumber);
+            detail.setSpacing(5);
+            detail.setAlignment(Pos.CENTER);
+            card.getChildren().addAll(imageView, name, detail);
+            card.setAlignment(Pos.CENTER);
+            card.setSpacing(5);
+            card.setStyle("-fx-background-color: #ffffff; -fx-padding: 10px; -fx-background-radius: 20px;");
+            // apply shadow effect with black color with opacity of 0.5
+            DropShadow dropShadow = new DropShadow();
+            dropShadow.setRadius(5.0);
+            dropShadow.setOffsetX(0.0);
+            dropShadow.setOffsetY(0.0);
+            dropShadow.setColor(Color.rgb(0, 0, 0, 0.5));
+            card.setEffect(dropShadow);
+            // make card 100 width
+            card.setMinWidth(250);
+            card.setId(result.getString("id"));
+            card.setOnMouseClicked(new EventHandler<MouseEvent>() {
+               @Override
+               public void handle(MouseEvent mouseEvent) {
+                  var doctorCardList = doctor_list.getChildren();
+                  for (var doctorCard : doctorCardList) {
+                       doctorCard.setStyle("-fx-background-color: #ffffff; -fx-padding: 10px; -fx-background-radius: 20px;");
+                  }
+                  card.setStyle("-fx-background-color: linear-gradient(to bottom right, #188ba7, #306090); -fx-padding: 10px; -fx-background-radius: 20px;");
+                  selectedDoctorID = Integer.parseInt(card.getId());
+               }
+            });
+            if (selectedDoctorID != null && selectedDoctorID == Integer.parseInt(card.getId())) {
+                card.setStyle("-fx-background-color: linear-gradient(to bottom right, #188ba7, #306090); -fx-padding: 10px; -fx-background-radius: 20px;");
+                previousSelectedExist = true;
+            }
+            doctor_list.getChildren().add(card);
          }
-
-         editApp_doctor.setItems(listData);
-         specializedList();
+         if (!previousSelectedExist) {
+             selectedDoctorID = null;
+         }
       } catch (SQLException e) {
          e.printStackTrace();
+      }
+   }
+
+   public String emptyPlaceholder(String text) {
+      if (text == null || text.isEmpty()) {
+         return "N/A";
+      } else {
+         return text;
       }
    }
 
@@ -215,7 +291,7 @@ public class EditAppointmentFormController implements Initializable {
 
                   String updateData = "UPDATE appointment SET name = '"
                           + editApp_fullName.getText() + "', gender = '"
-                          + editApp_gender.getSelectionModel().getSelectedItem() + "', moblie_number = '"
+                          + editApp_gender.getSelectionModel().getSelectedItem() + "', mobile_number = '"
                           + editApp_mobileNumber.getText() + "', image = '"
                           + insertImage + "', address = '"
                           + editApp_address.getText() + "', description = '"
@@ -260,10 +336,15 @@ public class EditAppointmentFormController implements Initializable {
    }
 
    public void postInitialize() {
-      doctorList();
+      showDoctorList();
 //      genderList();
 //      statusList();
-
+       List<String> specializes = new ArrayList<>(Arrays.asList(Data.specialization));
+        ObservableList<String> listData = FXCollections.observableList(specializes);
+        editApp_specialized.setItems(listData);
+        editApp_specialized.setOnAction(event -> {
+            showDoctorList();
+        });
       if (mode.equals("edit")) {
          displayFields();
       }

@@ -660,7 +660,7 @@ public class ManagerMainFormController implements Initializable {
             dData = new DoctorData(result.getInt("id"), result.getString("code"),
                     result.getString("password"), result.getString("full_name"),
                     result.getString("email"), result.getString("gender"),
-                    result.getLong("moblie_number"), result.getString("specialized"),
+                    result.getLong("mobile_number"), result.getString("specialized"),
                     result.getString("address"), result.getString("image"),
                     result.getDate("created_at"), result.getDate("modified_at"),
                     result.getDate("deleted_at"), result.getString("status"),
@@ -830,13 +830,13 @@ public class ManagerMainFormController implements Initializable {
 
       ObservableList<PatientsData> listData = FXCollections.observableArrayList();
 
-      String sql = "SELECT p.id, p.full_name, p.password, p.moblie_number, p.gender, p.address, p.image, p.created_at, p.modified_at, p.deleted_at, p.status, p.birthday, "
+      String sql = "SELECT p.id, p.full_name, p.password, p.mobile_number, p.gender, p.address, p.image, p.created_at, p.modified_at, p.deleted_at, p.status, p.birthday, "
               + " SUM(payment.total_price) as total_spent, COUNT(appointment.id) as total_appt"
               + " FROM patient p"
               + " left join appointment on p.id = appointment.patient_id"
               + " left join payment on appointment.id = payment.appointment_id"
               + " WHERE p.deleted_at IS NULL"
-              + " GROUP BY p.id, p.full_name, p.password, p.moblie_number, p.gender, p.address, p.image, p.created_at, p.modified_at, p.deleted_at, p.status, p.birthday";
+              + " GROUP BY p.id, p.full_name, p.password, p.mobile_number, p.gender, p.address, p.image, p.created_at, p.modified_at, p.deleted_at, p.status, p.birthday";
 
 
       connect = database.connectDB();
@@ -851,7 +851,7 @@ public class ManagerMainFormController implements Initializable {
 
             pData = new PatientsData(result.getInt("id"), 0,
                     result.getString("password"), result.getString("full_name"),
-                    result.getString("moblie_number"), result.getString("gender"),
+                    result.getString("mobile_number"), result.getString("gender"),
                     result.getString("address"),
                     result.getString("image"), "",
                     "",
@@ -1073,10 +1073,10 @@ public class ManagerMainFormController implements Initializable {
       String sql = "SELECT " +
       "appt.*, "
               + "pt.full_name AS patient_name, "
-              + "pt.moblie_number AS patient_phone, "
+              + "pt.mobile_number AS patient_phone, "
               + "pt.gender AS patient_gender, "
               + "doc.full_name AS doctor_name, "
-              + "doc.moblie_number AS doctor_phone, "
+              + "doc.mobile_number AS doctor_phone, "
               + "doc.specialized AS doctor_specialized, "
               + "payment.paid_at AS paid_at, "
               + "COALESCE(payment.total_price, 0) AS total_price, "
@@ -1741,7 +1741,7 @@ public class ManagerMainFormController implements Initializable {
    }
 
    public String emptyPlaceholder(String text) {
-      if (text.isEmpty()) {
+      if (text == null || text.isEmpty()) {
          return "N/A";
       } else {
          return text;

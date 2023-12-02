@@ -101,7 +101,7 @@ public class RecordPageFormController implements Initializable {
 //            , Date dateModify, Date dateDelete)
          while (result.next()) {
             pData = new PatientsData(result.getInt("id"), 0,
-                    result.getString("full_name"), result.getString("gender"), result.getString("moblie_number"),
+                    result.getString("full_name"), result.getString("gender"), result.getString("mobile_number"),
                     result.getString("address"), result.getString("status"), result.getDate("created_at"),
                     result.getDate("modified_at"), result.getDate("deleted_at"));
             listData.add(pData);

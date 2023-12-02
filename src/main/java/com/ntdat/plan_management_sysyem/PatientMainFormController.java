@@ -350,7 +350,7 @@ public class PatientMainFormController implements Initializable {
             home_doctor_name.setText(result.getString("full_name"));
             home_doctor_specialization.setText(result.getString("specialized"));
             home_doctor_email.setText(result.getString("email"));
-            home_doctor_mobileNumber.setText(result.getString("moblie_number"));
+            home_doctor_mobileNumber.setText(result.getString("mobile_number"));
 
             String path = result.getString("image");
 
@@ -450,7 +450,7 @@ public class PatientMainFormController implements Initializable {
 
          if (result.next()) {
             appointment_ad_name.setText(result.getString("full_name"));
-            appointment_ad_mobileNumber.setText(result.getString("moblie_number"));
+            appointment_ad_mobileNumber.setText(result.getString("mobile_number"));
             appointment_ad_gender.setText(result.getString("gender"));
             appointment_ad_address.setText(result.getString("address"));
          }
@@ -549,7 +549,7 @@ public class PatientMainFormController implements Initializable {
          }
 
          String insertData = "INSERT INTO appointment (appointment_id, patient_id, name, gender"
-                 + ", description, moblie_number, address, date"
+                 + ", description, mobile_number, address, date"
                  + ", doctor, specialized, schedule, status) "
                  + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
          Date date = new Date();
@@ -596,7 +596,7 @@ public class PatientMainFormController implements Initializable {
          if (result.next()) {
             profile_patientID.setText(result.getString("patient_id"));
             profile_name.setText(result.getString("full_name"));
-            profile_mobileNumber.setText(result.getString("moblie_number"));
+            profile_mobileNumber.setText(result.getString("mobile_number"));
             profile_status.getSelectionModel().select(result.getString("gender"));
             profile_password.setText(result.getString("password"));
             profile_address.setText(result.getString("address"));
@@ -624,7 +624,7 @@ public class PatientMainFormController implements Initializable {
          if (result.next()) {
             profile_label_patientID.setText(result.getString("patient_id"));
             profile_label_name.setText(result.getString("full_name"));
-            profile_label_mobileNumber.setText(result.getString("moblie_number"));
+            profile_label_mobileNumber.setText(result.getString("mobile_number"));
             profile_label_dateCreated.setText(result.getString("created_at"));
          }
       } catch (Exception e) {
@@ -674,7 +674,7 @@ public class PatientMainFormController implements Initializable {
          if (alert.confirmationMessage("Are you sure you want to Update your Profile?")) {
             if (Data.path == null || "".equals(Data.path)) {
                String updateData = "UPDATE patient SET "
-                       + "full_name = '" + profile_name.getText() + "', moblie_number = '"
+                       + "full_name = '" + profile_name.getText() + "', mobile_number = '"
                        + profile_mobileNumber.getText() + "', gender = '"
                        + profile_status.getSelectionModel().getSelectedItem() + "', password = '"
                        + profile_password.getText() + "', address = '"
@@ -701,7 +701,7 @@ public class PatientMainFormController implements Initializable {
                copyPath = copyPath.replace("\\", "\\\\");
 
                String updateData = "UPDATE patient SET "
-                       + "full_name = '" + profile_name.getText() + "', moblie_number = '"
+                       + "full_name = '" + profile_name.getText() + "', mobile_number = '"
                        + profile_mobileNumber.getText() + "', gender = '"
                        + profile_status.getSelectionModel().getSelectedItem() + "', password = '"
                        + profile_password.getText() + "', address = '"

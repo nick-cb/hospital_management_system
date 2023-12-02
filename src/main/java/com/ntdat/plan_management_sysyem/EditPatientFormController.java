@@ -107,7 +107,7 @@ public class EditPatientFormController implements Initializable {
          String path = extractPathFromImageView();
          String writePath = ImageConfig.writeToDisk(path);
          String updateData = "UPDATE patient SET full_name = ?, gender = ?"
-                 + ", moblie_number = ?, address = ?, status = ?, modified_at = ? "
+                 + ", mobile_number = ?, address = ?, status = ?, modified_at = ? "
                  + ", birthday = ?, password = ?, image = ?"
                  + " WHERE id = '"
                  + edit_patientID.getText() + "'";
@@ -146,7 +146,7 @@ public class EditPatientFormController implements Initializable {
       } else {
          String path = extractPathFromImageView();;
          String writePath = ImageConfig.writeToDisk(path);
-         String createData = "INSERT INTO patient (password, full_name, moblie_number, gender, address,status, birthday, image) "
+         String createData = "INSERT INTO patient (password, full_name, mobile_number, gender, address,status, birthday, image) "
                  + " values (?, ?, ?, ?, ?, ?, ?, ?)";
          prepare = connect.prepareStatement(createData);
          prepare.setString(1, edit_password.getText());

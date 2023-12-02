@@ -514,7 +514,7 @@ public class DoctorMainFormController implements Initializable {
             if (result.next()) {
                alert.errorMessage(patients_PA_patientID.getText() + " is already exist");
             } else {
-               String insertData = "INSERT INTO patient (patient_id, password, full_name, moblie_number, "
+               String insertData = "INSERT INTO patient (patient_id, password, full_name, mobile_number, "
                        + "address, doctor, specialized, date, "
                        + "status) "
                        + "VALUES(?,?,?,?,?,?,?,?,?)";
@@ -619,7 +619,7 @@ public class DoctorMainFormController implements Initializable {
                }
 
                String insertData = "INSERT INTO appointment (appointment_id, name, gender"
-                       + ", description, diagnosis, treatment, moblie_number"
+                       + ", description, diagnosis, treatment, mobile_number"
                        + ", address, date, status, doctor, specialized, schedule) "
                        + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
                prepare = connect.prepareStatement(insertData);
@@ -676,7 +676,7 @@ public class DoctorMainFormController implements Initializable {
 
          String updateData = "UPDATE appointment SET name = '"
                  + appointment_name.getText() + "', gender = '"
-                 + appointment_gender.getSelectionModel().getSelectedItem() + "', moblie_number = '"
+                 + appointment_gender.getSelectionModel().getSelectedItem() + "', mobile_number = '"
                  + appointment_mobileNumber.getText() + "', description = '"
                  + appointment_description.getText() + "', diagnosis = '"
                  + appointment_diagnosis.getText() + "', treatment = '"
@@ -835,7 +835,7 @@ public class DoctorMainFormController implements Initializable {
 
             appData = new AppointmentData(result.getInt("appointment_id"),
                     result.getString("name"), result.getString("gender"),
-                    result.getLong("moblie_number"), result.getString("description"),
+                    result.getLong("mobile_number"), result.getString("description"),
                     result.getString("diagnosis"), result.getString("treatment"),
                     result.getString("address"), result.getDate("created_at"),
                     result.getDate("date_modify"), result.getDate("date_delete"),
@@ -914,7 +914,7 @@ public class DoctorMainFormController implements Initializable {
          // CHECK IF THE PATH IS NULL 
          if (Data.path == null || "".equals(Data.path)) {
             String updateData = "UPDATE doctor SET full_name = ?, email = ?"
-                    + ", gender = ?, moblie_number = ?, address = ?, specialized = ?, status = ?, modified_at = ?"
+                    + ", gender = ?, mobile_number = ?, address = ?, specialized = ?, status = ?, modified_at = ?"
                     + " WHERE id = '"
                     + Data.doctor_id + "'";
             try {
@@ -937,7 +937,7 @@ public class DoctorMainFormController implements Initializable {
             }
          } else {
             String updateData = "UPDATE doctor SET full_name = ?, email = ?"
-                    + ", gender = ?, moblie_number = ?, address = ?, image = ?, specialized = ?, status = ?, modified_at = ?"
+                    + ", gender = ?, mobile_number = ?, address = ?, image = ?, specialized = ?, status = ?, modified_at = ?"
                     + " WHERE id = '"
                     + Data.doctor_id + "'";
             try {
@@ -1026,7 +1026,7 @@ public class DoctorMainFormController implements Initializable {
             profile_name.setText(result.getString("full_name"));
             profile_email.setText(result.getString("email"));
             profile_gender.getSelectionModel().select(result.getString("gender"));
-            profile_mobileNumber.setText(result.getString("moblie_number"));
+            profile_mobileNumber.setText(result.getString("mobile_number"));
             profile_address.setText(result.getString("address"));
             profile_specialized.getSelectionModel().select(result.getString("specialized"));
             profile_status.getSelectionModel().select(result.getString("status"));

@@ -129,7 +129,7 @@ public class EditDoctorFormController implements Initializable {
                 editDoctor_password.setText(result.getString("password"));
                 editDoctor_specialized.getSelectionModel().select(result.getString("specialized"));
                 editDoctor_gender.getSelectionModel().select(result.getString("gender"));
-                editDoctor_mobileNumber.setText(result.getString("moblie_number"));
+                editDoctor_mobileNumber.setText(result.getString("mobile_number"));
                 editDoctor_address.setText(result.getString("address"));
                 editDoctor_status.getSelectionModel().select(result.getString("status"));
 
@@ -156,7 +156,7 @@ public class EditDoctorFormController implements Initializable {
                     + editDoctor_email.getText() + "', password = '"
                     + editDoctor_password.getText() + "', specialized = '"
                     + editDoctor_specialized.getSelectionModel().getSelectedItem() + "', gender = '"
-                    + editDoctor_gender.getSelectionModel().getSelectedItem() + "', moblie_number = '"
+                    + editDoctor_gender.getSelectionModel().getSelectedItem() + "', mobile_number = '"
                     + editDoctor_mobileNumber.getText() + "', address = '"
                     + editDoctor_address.getText() + "', status = '"
                     + editDoctor_status.getSelectionModel().getSelectedItem() + "', modified_at = '"
@@ -194,7 +194,7 @@ public class EditDoctorFormController implements Initializable {
                             + editDoctor_email.getText() + "', password = '"
                             + editDoctor_password.getText() + "', specialized = '"
                             + editDoctor_specialized.getSelectionModel().getSelectedItem() + "', gender = '"
-                            + editDoctor_gender.getSelectionModel().getSelectedItem() + "', moblie_number = '"
+                            + editDoctor_gender.getSelectionModel().getSelectedItem() + "', mobile_number = '"
                             + editDoctor_mobileNumber.getText() + "', image = '"
                             + insertImage + "', address = '"
                             + editDoctor_address.getText() + "', status = '"
@@ -218,7 +218,7 @@ public class EditDoctorFormController implements Initializable {
     }
 
     public void createDoctor() {
-        String createData = "INSERT INTO doctor (full_name, email, password, specialized, gender, moblie_number, address, status, image, salary) VALUES (?,?,?,?,?,?,?,?,?,?)";
+        String createData = "INSERT INTO doctor (full_name, email, password, specialized, gender, mobile_number, address, status, image, salary) VALUES (?,?,?,?,?,?,?,?,?,?)";
 
         try {
            prepare = connect.prepareStatement(createData, Statement.RETURN_GENERATED_KEYS);
