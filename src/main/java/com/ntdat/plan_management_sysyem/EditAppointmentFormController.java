@@ -63,10 +63,10 @@ public class EditAppointmentFormController implements Initializable {
    private TextArea editApp_description;
 
    @FXML
-   private TextField editApp_diagnosis;
+   private TextArea editApp_diagnosis;
 
    @FXML
-   private TextField editApp_treatment;
+   private TextArea editApp_treatment;
 
    @FXML
    private ComboBox<String> editApp_doctor;
@@ -79,6 +79,12 @@ public class EditAppointmentFormController implements Initializable {
 
    @FXML
    private HBox doctor_list;
+
+   @FXML
+   private TextField patient_phone;
+
+   @FXML
+   private VBox patientVBox;
 
    private Connection connect;
    private PreparedStatement prepare;
@@ -335,18 +341,72 @@ public class EditAppointmentFormController implements Initializable {
 
    }
 
+   public void setPatient() {
+      System.out.println("RUN");
+      String phone = patient_phone.getText();
+      String sql = "SELECT * FROM patient WHERE mobile_number = '" + phone + "'";
+      connect = database.connectDB();
+      try {
+         prepare = connect.prepareStatement(sql);
+         result = prepare.executeQuery();
+         var patient = result.next();
+         if (!patient) {
+            alert.errorMessage("Patient not found!");
+         } else {
+            var path = result.getString("image");
+            if (path == null || path.isEmpty()) {
+               path = ImageConfig.defaultImage;
+            } else {
+               path = ImageConfig.formatPathRead(path);
+            }
+            patientVBox.getChildren().clear();
+            ImageView imageView = createImageView("File:" + ImageConfig.formatPathRead(path));
+
+            Label fullName = new Label(result.getString("full_name"));
+            fullName.setStyle("-fx-font-size: 16px; -fx-font-weight: bold");
+            Label phoneNumber = new Label("Phone: " + result.getString("mobile_number"));
+            phoneNumber.setStyle("-fx-font-size: 12px;");
+            Label birthday = new Label("Birthday: " + result.getString("birthday"));
+            birthday.setStyle("-fx-font-size: 12px;");
+            Label gender = new Label("Gender: " + result.getString("gender"));
+            gender.setStyle("-fx-font-size: 12px;");
+            patientVBox.getChildren().clear();
+            patientVBox.getChildren().addAll(imageView, fullName, phoneNumber, birthday, gender);
+         }
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
+   }
+
+   public ImageView createImageView(String path) {
+      ImageView imageView = new ImageView();
+      Image image = new Image(path);
+      imageView.setImage(image);
+      Circle circle = new Circle();
+      imageView.setFitHeight(100);
+      imageView.setFitWidth(100);
+      circle.setRadius(Math.min(imageView.getFitWidth(), imageView.getFitHeight() / 2));
+      circle.setCenterX(imageView.getFitWidth() / 2);
+      circle.setCenterY(imageView.getFitHeight() / 2);
+      imageView.setClip(circle);
+
+      return imageView;
+   }
+
    public void postInitialize() {
       showDoctorList();
 //      genderList();
 //      statusList();
-       List<String> specializes = new ArrayList<>(Arrays.asList(Data.specialization));
-        ObservableList<String> listData = FXCollections.observableList(specializes);
-        editApp_specialized.setItems(listData);
-        editApp_specialized.setOnAction(event -> {
+      List<String> specializes = new ArrayList<>(Arrays.asList(Data.specialization));
+      ObservableList<String> listData = FXCollections.observableList(specializes);
+      editApp_specialized.setItems(listData);
+      editApp_specialized.setOnAction(event -> {
             showDoctorList();
         });
       if (mode.equals("edit")) {
          displayFields();
+      } else {
+         patientVBox.getChildren().add(createImageView("File:" + ImageConfig.defaultImage));
       }
    }
 
