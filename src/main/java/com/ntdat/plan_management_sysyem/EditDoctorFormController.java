@@ -88,6 +88,7 @@ public class EditDoctorFormController implements Initializable {
     private TextField editDoctor_salary;
 
     private AlertMessage alert = new AlertMessage();
+    private ManagerMainFormController managerMainFormController;
 
     private Image image;
 
@@ -166,6 +167,7 @@ public class EditDoctorFormController implements Initializable {
                 if (alert.confirmationMessage("Are you sure you want to Update Doctor ID: " + editDoctor_doctorID.getText() + "?")) {
                     prepare = connect.prepareStatement(updateData);
                     prepare.executeUpdate();
+                    managerMainFormController.refreshDoctorTable();
                     alert.successMessage("Update doctor successfully!");
                 } else {
                     alert.errorMessage("Cancelled.");
@@ -203,6 +205,7 @@ public class EditDoctorFormController implements Initializable {
 
                     prepare = connect.prepareStatement(updateData);
                     prepare.executeUpdate();
+                    managerMainFormController.refreshDoctorTable();
                     alert.successMessage("Update doctor successfully!");
                 } else {
                     alert.errorMessage("Cancelled.");
@@ -215,8 +218,6 @@ public class EditDoctorFormController implements Initializable {
     }
 
     public void createDoctor() {
-        Date date = new Date();
-
         String createData = "INSERT INTO doctor (full_name, email, password, specialized, gender, moblie_number, address, status, image, salary) VALUES (?,?,?,?,?,?,?,?,?,?)";
 
         try {
@@ -246,6 +247,7 @@ public class EditDoctorFormController implements Initializable {
                this.editDoctor_doctorID.setText(String.valueOf(id));
                Data.edit_doctor_mode = "edit";
            }
+           managerMainFormController.refreshDoctorTable();
            alert.successMessage("Create doctor successfully!");
             Stage stage = (Stage) editDoctor_updateBtn.getScene().getWindow();
             stage.close();
@@ -337,6 +339,10 @@ public class EditDoctorFormController implements Initializable {
 
         ObservableList listData = FXCollections.observableList(statusL);
         editDoctor_status.setItems(listData);
+    }
+
+    public void setManagerMainFormController(ManagerMainFormController controller) {
+        this.managerMainFormController = controller;
     }
 
     /**

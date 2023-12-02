@@ -644,7 +644,7 @@ public class ManagerMainFormController implements Initializable {
    public ObservableList<DoctorData> doctorGetData() {
       ObservableList<DoctorData> listData = FXCollections.observableArrayList();
 
-      String sql = "SELECT * FROM doctor";
+      String sql = "SELECT * FROM doctor where deleted_at IS NULL";
 
       connect = database.connectDB();
 
@@ -697,6 +697,7 @@ public class ManagerMainFormController implements Initializable {
       doctorListData = doctorGetData();
 
       Callback<TableColumn<DoctorData, String>, TableCell<DoctorData, String>> cellFactory = (TableColumn<DoctorData, String> param) -> {
+         ManagerMainFormController managerMainFormController = this;
          final TableCell<DoctorData, String> cell = new TableCell<DoctorData, String>() {
             public void updateItem(String item, boolean empty) {
                super.updateItem(item, empty);
@@ -745,18 +746,15 @@ public class ManagerMainFormController implements Initializable {
 
                         // NOW LETS CREATE FXML FOR EDIT PATIENT FORM
                         Data.edit_doctor_mode = "edit";
-                        Parent root = FXMLLoader.load(getClass().getResource("EditDoctorForm.fxml"));
+//                        Parent root = FXMLLoader.load(getClass().getResource("EditDoctorForm.fxml"));
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("EditDoctorForm.fxml"));
+                        Parent root = loader.load();
+                        EditDoctorFormController editDoctorFormController = loader.getController();
+                        editDoctorFormController.setManagerMainFormController(managerMainFormController);
                         Stage stage = new Stage();
 
                         stage.setScene(new Scene(root));
                         stage.show();
-                        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                           @Override
-                           public void handle(WindowEvent windowEvent) {
-                              doctorListData = doctorGetData();
-                              doctors_tableView.setItems(doctorListData);
-                           }
-                        });
                      } catch (Exception e) {
                         e.printStackTrace();
                      }
@@ -772,7 +770,7 @@ public class ManagerMainFormController implements Initializable {
                      }
 
                      String deleteData = "UPDATE doctor SET deleted_at = ? WHERE id = '"
-                             + pData.getDoctorID() + "'";
+                             + pData.getId() + "'";
 
                      try {
                         if (alert.confirmationMessage("Are you sure you want to delete Doctor ID: " + pData.getDoctorID() + "?")) {
@@ -783,9 +781,8 @@ public class ManagerMainFormController implements Initializable {
                            prepare.setString(1, String.valueOf(sqlDate));
                            prepare.executeUpdate();
 
-                           doctorGetData();
+                           managerMainFormController.refreshDoctorTable();
                            alert.successMessage("Deleted Successfully!");
-
                         }
                      } catch (Exception e) {
                         e.printStackTrace();
@@ -1060,17 +1057,14 @@ public class ManagerMainFormController implements Initializable {
 
    public void openCreateForm() throws IOException {
       Data.edit_doctor_mode = "add";
-      Parent root = FXMLLoader.load(getClass().getResource("EditDoctorForm.fxml"));
+//      Parent root = FXMLLoader.load(getClass().getResource("EditDoctorForm.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("EditDoctorForm.fxml"));
+        Parent root = loader.load();
+        EditDoctorFormController editDoctorFormController = loader.getController();
+        editDoctorFormController.setManagerMainFormController(this);
       Stage stage = new Stage();
       stage.setScene(new Scene(root));
       stage.show();
-      stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-         @Override
-         public void handle(WindowEvent windowEvent) {
-            doctorListData = doctorGetData();
-            doctors_tableView.setItems(doctorListData);
-         }
-      });
    }
    public ObservableList<AppointmentData> appointmentGetData() {
 
@@ -1604,6 +1598,11 @@ public class ManagerMainFormController implements Initializable {
    public void refreshPatientTable() {
       this.patientListData = this.patientGetData();
       this.patients_tableView.setItems(this.patientListData);
+   }
+
+   public void refreshDoctorTable() {
+      this.doctorListData = this.doctorGetData();
+      this.doctors_tableView.setItems(doctorListData);
    }
 
    /**
