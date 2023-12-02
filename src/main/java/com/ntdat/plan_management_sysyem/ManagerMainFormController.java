@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
- */
 package com.ntdat.plan_management_sysyem;
 
 import com.ntdat.plan_management_sysyem.database.AppointmentData;
@@ -22,12 +18,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,7 +33,6 @@ import java.util.ResourceBundle;
 
 import com.ntdat.plan_management_sysyem.utils.ImageConfig;
 import javafx.application.Platform;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -53,7 +50,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
@@ -61,7 +57,6 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Callback;
-import javafx.util.StringConverter;
 
 /**
  * FXML Controller class
@@ -533,8 +528,10 @@ public class ManagerMainFormController implements Initializable {
    }
 
    public void dashboardStackBarChart() {
-      var xAxis = new CategoryAxis();
-      var yAxis = new NumberAxis();
+      var xAxis = dashboard_revenue_chart.getXAxis();
+      var yAxis = dashboard_revenue_chart.getYAxis();
+      xAxis.setAnimated(false);
+      dashboard_revenue_chart.getData().clear();
 
       var series1 = new XYChart.Series<String, Number>();
       var series2 = new XYChart.Series<String, Number>();
@@ -547,10 +544,46 @@ public class ManagerMainFormController implements Initializable {
       series2.setName("Cost");
       series3.setName("Profit");
 
-      for(int i = 1; i <= 12; i++) {
-         series1.getData().add(new XYChart.Data<>(String.valueOf(i), 1000000 * i));
-         series2.getData().add(new XYChart.Data<>(String.valueOf(i), 500000 * i));
-         series3.getData().add(new XYChart.Data<>(String.valueOf(i), 500000 * i));
+      var from = fromMonthYearPicker.getValue().atDay(1);
+      var different = ChronoUnit.MONTHS.between(fromMonthYearPicker.getValue(), toMonthYearPicker.getValue());
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
+
+      for(int i = 0; i <= different; i++) {
+         var thisMonth = from.plusMonths(i);
+         var thisMonthFormatted = thisMonth.format(formatter);
+         var revenue = (double) 0;
+         var cost = (double) 0;
+
+         connect = database.connectDB();
+         String paymentQuery = "SELECT SUM(total_price) FROM payment WHERE paid_at BETWEEN ? AND ?";
+         String costQuery = "SELECT SUM(salary) FROM doctor";
+         try {
+             assert connect != null;
+             prepare = connect.prepareStatement(paymentQuery);
+             prepare.setDate(1, java.sql.Date.valueOf(thisMonth.withDayOfMonth(1)));
+             prepare.setDate(2, java.sql.Date.valueOf(thisMonth.with(TemporalAdjusters.lastDayOfMonth())));
+             ResultSet result = prepare.executeQuery();
+             if (result.next()) {
+                 series1.getData().add(new XYChart.Data<>(thisMonthFormatted, result.getDouble(1)));
+                 revenue = result.getDouble(1);
+             }
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+
+         try {
+             assert connect != null;
+             prepare = connect.prepareStatement(costQuery);
+             ResultSet result = prepare.executeQuery();
+             if (result.next()) {
+                 series2.getData().add(new XYChart.Data<>(thisMonthFormatted, result.getDouble(1)));
+                    cost = result.getDouble(1);
+             }
+         } catch (Exception e) {
+             e.printStackTrace();
+         }
+
+         series3.getData().add(new XYChart.Data<>(thisMonthFormatted, revenue - cost));
       }
 
       dashboard_revenue_chart.getData().addAll(series1, series2, series3);
@@ -560,7 +593,7 @@ public class ManagerMainFormController implements Initializable {
       fromMonthYearPicker = new MonthYearPicker();
       fromMonthYearPicker.setValue(YearMonth.of(LocalDate.now().getYear(), 1));
       toMonthYearPicker = new MonthYearPicker();
-      toMonthYearPicker.setValue(LocalDate.now());
+      toMonthYearPicker.setValue(fromMonthYearPicker.getValue().plusMonths(6));
 
       fromMonthYearPicker.setMax(YearMonth.from(LocalDate.now()));
       fromMonthYearPicker.setMax(YearMonth.from(toMonthYearPicker.getValue().atDay(1).minusMonths(1)));
@@ -572,6 +605,10 @@ public class ManagerMainFormController implements Initializable {
          if (toMonthYearPicker.getValue().compareTo(newValue) < 0) {
             toMonthYearPicker.setValue(nextMonth);
          }
+         if (ChronoUnit.MONTHS.between(newValue, toMonthYearPicker.getValue()) > 12) {
+            toMonthYearPicker.setValue(newValue.plusMonths(12));
+         }
+         dashboardStackBarChart();
       });
       fromMonthYearPicker.showingProperty().addListener((observable, oldValue, newValue) -> {
          if (newValue) {
@@ -592,6 +629,10 @@ public class ManagerMainFormController implements Initializable {
          if (fromMonthYearPicker.getValue().compareTo(newValue) > 0) {
             fromMonthYearPicker.setValue(previousMonth);
          }
+         if (ChronoUnit.MONTHS.between(fromMonthYearPicker.getValue(), newValue) > 12) {
+             fromMonthYearPicker.setValue(newValue.minusMonths(12));
+         }
+         dashboardStackBarChart();
       });
 
       HBox toHbox = new HBox(new Label("To:"), toMonthYearPicker);
@@ -1509,8 +1550,8 @@ public class ManagerMainFormController implements Initializable {
       dashboardTP();
       dashboardAP();
       dashboardTA();
-      dashboardStackBarChart();
       dashboardRevenueTimePicker();
+      dashboardStackBarChart();
    /*      dashboardGetDoctorDisplayData();
       dashboardPatientDataChart();
       dashboardDoctorDataChart();*/

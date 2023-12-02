@@ -117,7 +117,7 @@
                <center>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                      <children>
-                        <AnchorPane fx:id="dashboard_form" layoutX="161.0" layoutY="112.0" prefHeight="560.0" prefWidth="886.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="dashboard_form" layoutX="161.0" layoutY="112.0" prefHeight="560.0" prefWidth="886.0" styleClass="white-bg" stylesheets="@css/MainFormDesign.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="13.0" layoutY="14.0" prefHeight="156.0" prefWidth="860.0" stylesheets="@css/MainFormDesign.css" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="14.0">
                                  <styleClass>
@@ -236,7 +236,7 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="doctors_form" layoutX="324.0" layoutY="144.0" prefHeight="560.0" prefWidth="886.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="doctors_form" layoutX="324.0" layoutY="144.0" prefHeight="560.0" prefWidth="886.0" styleClass="white-bg" stylesheets="@css/MainFormDesign.css" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="9.0" layoutY="12.0" prefHeight="537.0" prefWidth="868.0" stylesheets="@css/MainFormDesign.css" AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="9.0" AnchorPane.topAnchor="12.0">
                                  <styleClass>
@@ -282,7 +282,7 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="patients_form" layoutX="1.0" prefHeight="560.0" prefWidth="886.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="patients_form" layoutX="1.0" prefHeight="560.0" prefWidth="886.0" styleClass="white-bg" stylesheets="@css/MainFormDesign.css" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="9.0" layoutY="12.0" prefHeight="537.0" prefWidth="868.0" stylesheets="@css/MainFormDesign.css" AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="9.0" AnchorPane.topAnchor="12.0">
                                  <styleClass>
@@ -314,7 +314,7 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="appointments_form" layoutX="5.0" layoutY="5.0" prefHeight="560.0" prefWidth="886.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="appointments_form" layoutX="5.0" layoutY="5.0" prefHeight="560.0" prefWidth="886.0" styleClass="white-bg" stylesheets="@css/MainFormDesign.css" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="9.0" layoutY="12.0" prefHeight="537.0" prefWidth="868.0" stylesheets="@css/MainFormDesign.css" AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="9.0" AnchorPane.topAnchor="12.0">
                                  <styleClass>
@@ -346,7 +346,7 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="payment_form" layoutX="34.0" layoutY="50.0" prefHeight="560.0" prefWidth="886.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="payment_form" layoutX="34.0" layoutY="50.0" prefHeight="560.0" prefWidth="886.0" styleClass="white-bg" stylesheets="@css/MainFormDesign.css" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="14.0" layoutY="14.0" prefHeight="533.0" prefWidth="549.0" stylesheets="@css/MainFormDesign.css" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="323.0" AnchorPane.topAnchor="14.0">
                                  <styleClass>
@@ -393,7 +393,7 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="profile_form" layoutX="114.0" layoutY="102.0" prefHeight="560.0" prefWidth="886.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="profile_form" layoutX="114.0" layoutY="102.0" prefHeight="560.0" prefWidth="886.0" styleClass="white-bg" stylesheets="@css/MainFormDesign.css" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="14.0" layoutY="17.0" prefHeight="527.0" prefWidth="274.0" stylesheets="@css/MainFormDesign.css" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="17.0">
                                  <styleClass>
