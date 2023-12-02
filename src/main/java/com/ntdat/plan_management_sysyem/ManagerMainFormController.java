@@ -1288,20 +1288,25 @@ public class ManagerMainFormController implements Initializable {
                            return;
                         }
 
-                        Data.temp_appID = String.valueOf(aData.getAppointmentID());
-                        Data.temp_appName = aData.getName();
-                        Data.temp_appGender = aData.getGender();
-                        Data.temp_appAddress = aData.getAddress();
-                        Data.temp_appDescription = aData.getDescription();
-                        Data.temp_appDiagnosis = aData.getDiagnosis();
-                        Data.temp_appTreatment = aData.getTreatment();
-                        Data.temp_appMobileNumber = String.valueOf(aData.getMobileNumber());
-                        Data.temp_appDoctor = aData.getDoctorID();
-                        Data.temp_appSpecialized = aData.getSpecialized();
-                        Data.temp_appStatus = aData.getStatus();
+//                        Data.temp_appID = String.valueOf(aData.getAppointmentID());
+//                        Data.temp_appName = aData.getName();
+//                        Data.temp_appGender = aData.getGender();
+//                        Data.temp_appAddress = aData.getAddress();
+//                        Data.temp_appDescription = aData.getDescription();
+//                        Data.temp_appDiagnosis = aData.getDiagnosis();
+//                        Data.temp_appTreatment = aData.getTreatment();
+//                        Data.temp_appMobileNumber = String.valueOf(aData.getMobileNumber());
+//                        Data.temp_appDoctor = aData.getDoctorID();
+//                        Data.temp_appSpecialized = aData.getSpecialized();
+//                        Data.temp_appStatus = aData.getStatus();
 
                         // NOW LETS CREATE FXML FOR EDIT APPOINTMENT FORM
-                        Parent root = FXMLLoader.load(getClass().getResource("EditAppointmentForm.fxml"));
+//                        Parent root = FXMLLoader.load(getClass().getResource("EditAppointmentForm.fxml"));
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("EditAppointmentForm.fxml"));
+                        Parent root = loader.load();
+                        EditAppointmentFormController editAppointmentFormController = loader.getController();
+                        editAppointmentFormController.setManagerMainFormController(ManagerMainFormController.this);
+                        editAppointmentFormController.appointmentData = aData;
                         Stage stage = new Stage();
 
                         stage.setScene(new Scene(root));
@@ -1741,6 +1746,24 @@ public class ManagerMainFormController implements Initializable {
       } else {
          return text;
       }
+   }
+
+   public void openCreateAppointment() {
+        try {
+//             Parent root = FXMLLoader.load(getClass().getResource("CreateAppointmentForm.fxml"));
+             FXMLLoader loader = new FXMLLoader(getClass().getResource("EditAppointmentForm.fxml"));
+             Parent root = loader.load();
+             EditAppointmentFormController createAppointmentFormController = loader.getController();
+             createAppointmentFormController.mode = "add";
+             createAppointmentFormController.setManagerMainFormController(this);
+             createAppointmentFormController.postInitialize();
+             Stage stage = new Stage();
+             stage.setTitle("Hospital Management System | Create Appointment");
+             stage.setScene(new Scene(root));
+             stage.show();
+        } catch (Exception e) {
+             e.printStackTrace();
+        }
    }
 
    /**

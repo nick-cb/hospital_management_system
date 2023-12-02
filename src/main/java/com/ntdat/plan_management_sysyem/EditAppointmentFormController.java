@@ -4,6 +4,7 @@
  */
 package com.ntdat.plan_management_sysyem;
 
+import com.ntdat.plan_management_sysyem.database.AppointmentData;
 import com.ntdat.plan_management_sysyem.database.Data;
 import com.ntdat.plan_management_sysyem.database.database;
 import com.ntdat.plan_management_sysyem.utils.AlertMessage;
@@ -38,7 +39,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 public class EditAppointmentFormController implements Initializable {
-
+   public String mode = "edit";
+   public AppointmentData appointmentData;
    @FXML
    private Button editApp_updateBtn;
 
@@ -80,19 +82,20 @@ public class EditAppointmentFormController implements Initializable {
    private ResultSet result;
 
    private AlertMessage alert = new AlertMessage();
+   private ManagerMainFormController managerMainFormController = new ManagerMainFormController();
 
    public void displayFields() {
-      editApp_appointmentID.setText(Data.temp_appID);
+      editApp_appointmentID.setText(appointmentData.getId().toString());
 //      editApp_fullName.setText(Data.temp_appName);
 //      editApp_gender.getSelectionModel().select(Data.temp_appGender);
 //      editApp_mobileNumber.setText(Data.temp_appMobileNumber);
 //      editApp_address.setText(Data.temp_appAddress);
 //      editApp_description.setText(Data.temp_appDescription);
-      editApp_diagnosis.setText(Data.temp_appDiagnosis);
-      editApp_treatment.setText(Data.temp_appTreatment);
-      editApp_doctor.getSelectionModel().select(Data.temp_appDoctor);
+      editApp_diagnosis.setText(appointmentData.getDiagnosis());
+      editApp_treatment.setText(appointmentData.getTreatment());
+//      editApp_doctor.getSelectionModel().select(appointmentData.getDoctorName());
 //      editApp_specialized.getSelectionModel().select(Data.temp_appSpecialized);
-      editApp_status.getSelectionModel().select(Data.temp_appStatus);
+//      editApp_status.getSelectionModel().select(Data.temp_appStatus);
    }
 
    public void doctorList() {
@@ -244,16 +247,26 @@ public class EditAppointmentFormController implements Initializable {
       displayFields();
    }
 
+   public void setManagerMainFormController(ManagerMainFormController managerMainFormController) {
+      this.managerMainFormController = managerMainFormController;
+   }
+
    /**
     * Initializes the controller class.
     */
    @Override
    public void initialize(URL url, ResourceBundle rb) {
+
+   }
+
+   public void postInitialize() {
       doctorList();
 //      genderList();
 //      statusList();
 
-      displayFields();
+      if (mode.equals("edit")) {
+         displayFields();
+      }
    }
 
 }
